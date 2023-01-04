@@ -34,7 +34,6 @@ export const GET_USER_PLAYS_AGG = `
           max {
             score
             accuracy
-            created_at
           }
         }
       }
