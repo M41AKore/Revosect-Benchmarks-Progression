@@ -36,14 +36,7 @@
         </div>
         <div class="flex flex-col text-lg">
           <span>Unique Tasks Played - {{ tasksPlayed }}</span>
-          <span>Total Play Count - {{ totalPlays }}</span>
-          <span
-            >VT Rank - {{ overallRankVT }}
-            <img
-              :src="`../../rank-img/${imagePath(overallRankVT)}_badge.png`"
-              class="h-5 inline"
-              alt=""
-          /></span>
+          <span>Total Play Count - {{ totalPlays }}</span>        
           <span
             >rA Rank - {{ overallRankRA }}
             <img
