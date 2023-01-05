@@ -11,6 +11,11 @@
       text-white
     "
   >
+    <img
+              :src="`../../rank-img/Asset 7@4x-8.png`"
+              class="h-5 inline"
+              alt=""
+          />
     <h1 class="text-2xl font-semibold">
       <router-link to="/home" id="header-text">Revosect Tracker</router-link>
     </h1>

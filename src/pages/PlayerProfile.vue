@@ -29,7 +29,7 @@
           >
 
           <progress-bar
-            class="w-40 h-5 bg-slate-200 rounded-sm"
+            class="w-40 h-5 bg-red-200 rounded-sm"
             :value="playerSkill"
             :color="'bg-mainCyan'"
           ></progress-bar>
