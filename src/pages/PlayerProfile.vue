@@ -110,8 +110,7 @@ export default {
       isLoading: false,
       tabs: {
         Overview: "profile-overview",
-        Voltaic: "vt-benches",
-        Revosect: "ra-benches",
+        Benchmarks: "ra-benches",
       },
     };
   },
