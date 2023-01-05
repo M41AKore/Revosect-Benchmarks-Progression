@@ -6,13 +6,13 @@
       items-center
       px-16
       py-6
-      bg-slate-700
+      bg-gray-900
       shadow-lg
       text-white
     "
   >
     <h1 class="text-2xl font-semibold">
-      <router-link to="/home" id="header-text">Aimlab Tracker</router-link>
+      <router-link to="/home" id="header-text">Revosect Tracker</router-link>
     </h1>
     <nav id="nav">
       <ul class="flex gap-4">
