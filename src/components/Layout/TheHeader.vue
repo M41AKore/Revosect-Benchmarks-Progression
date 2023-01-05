@@ -13,7 +13,7 @@
   >
     <img
               :src="`../../rank-img/Asset 7@4x-8.png`"
-              class="h-5 inline"
+              class="h-5"
               alt=""
           />
     <h1 class="text-2xl font-semibold">
