@@ -114,7 +114,7 @@
                         <progress-bar
                             class="h-5 w-full rounded-sm bg-slate-600"
                             :value="bench.progress"
-                            color="bg-sky-700"
+                            color="bg-red-700"
                         ></progress-bar>
                         <!-- colors: bg-grandmaster bg-nova bg-celestial bg-astra bg-iron bg-bronze bg-silver bg-gold bg-platinum bg-diamond bg-jade bg-master -->
                     </div>

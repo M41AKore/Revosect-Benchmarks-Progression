@@ -11,14 +11,25 @@
       text-white
     "
   >
-    <img
+    
+    <div class="
+    flex
+    items-center
+    gap-2
+    ">
+      <img
               :src="`../../rank-img/Asset 7@4x-8.png`"
-              class="h-5"
+              class="
+              h-5
+              "
               alt=""
           />
-    <h1 class="text-2xl font-semibold">
-      <router-link to="/home" id="header-text">Revosect Tracker</router-link>
-    </h1>
+        <h1 class="text-2xl font-semibold">
+        <router-link to="/home" id="header-text">Revosect Tracker</router-link>
+      </h1>
+      
+    </div>
+    
     <nav id="nav">
       <ul class="flex gap-4">
         <li v-for="link in navLinks" :key="link">
