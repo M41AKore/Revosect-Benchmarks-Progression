@@ -4,7 +4,7 @@
       <div class="relative flex flex-col gap-4">
         <h1 class="text-xl text-center">About Me</h1>
         <p>
-          Forked by Revosect. Originally created by Saibot
+          Modified by Revosect. Originally created by Saibot
         </p>
         <div
           class="flex gap-4 items-center justify-end absolute bottom-0 right-0"
