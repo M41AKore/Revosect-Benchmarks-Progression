@@ -6,7 +6,7 @@
       items-center
       px-16
       py-6
-      bg-gray-900
+      bg-red-900
       shadow-lg
       text-white
     "
