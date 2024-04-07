@@ -1,216 +1,214 @@
-export const categories = [
+export const categoriesS2 = [
   "Static",
   "Dynamic",
   "Precise",
-  "HybridTrack",
   "Reactive",
-  "FlickTS",
-  "HybridTS",
-  "TrackTS",
+  "Flick",
+  "Track",
 ];
 
-export const hardBench = [
+export const hardBenchS2 = [
   {
-    name: "S4 Threeshot Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 Three.RRSEC9",
-    scores: [1270, 1360, 1450, 1540, 1630],
+    name: "rA Twoshot",
+    weapon: "Custom_9mmrAnoADS",
+    id: "CsLevel.rA hebe.f96a4d2c.R2GOSC",
+    scores: [1120, 1190, 1260, 1330, 1400],
     category: "Clicking",
     subCategory: "Static",
     categoryID: 1,
     scenarioID: 1,
   },
   {
-    name: "S4 Fivewide Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 Fivew.RRU42Q",
-    scores: [1340, 1430, 1520, 1610, 1700],
+    name: "rA Fourwide",
+    weapon: "Custom_9mmrAnoADS",
+    id: "CsLevel.rA hebe.rA Fourw.R2J1AJ",
+    scores: [1420, 1490, 1570, 1640, 1720],
     category: "Clicking",
     subCategory: "Static",
     categoryID: 1,
     scenarioID: 2,
   },
   {
-    name: "S4 Fourwide Small Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 Fours.RRU3OU",
-    scores: [1170, 1240, 1310, 1380, 1450],
+    name: "rA Threewide Small",
+    weapon: "Custom_9mmrAnoADS",
+    id: "CsLevel.rA hebe.rA Three.R2IW6T",
+    scores: [1000, 1050, 1100, 1150, 1200],
     category: "Clicking",
     subCategory: "Static",
     categoryID: 1,
     scenarioID: 3,
   },
   {
-    name: "S4 Snapclick Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 Snapc.RRU2LN",
-    scores: [460, 530, 600, 700, 800],
+    name: "rA 3Dclick",
+    weapon: "Custom_9mmrAnoADS",
+    id: "CsLevel.rA hebe.morcaCli.R2673Z",
+    scores: [550, 620, 690, 760, 830],
     category: "Clicking",
     subCategory: "Dynamic",
     categoryID: 2,
     scenarioID: 4,
   },
   {
-    name: "S4 XYclick Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 XYcli.RRU324",
-    scores: [510, 580, 650, 740, 830],
+    name: "rA XYclick",
+    weapon: "9mm",
+    id: "CsLevel.Unans.rA XYCli.QVY03S",
+    scores: [740, 820, 900, 1000, 1100],
     category: "Clicking",
     subCategory: "Dynamic",
     categoryID: 2,
     scenarioID: 5,
   },
   {
-    name: "S4 Bounceclick Hard",
-    weapon: "Custom_RevoClicker",
-    id: "CsLevel.Revosect1.S4 Bounc.RRU3UC",
-    scores: [500, 590, 680, 790, 900],
+    name: "rA Jumpclick",
+    weapon: "Custom_9mmrAnoADS",
+    id: "CsLevel.rA hebe.JumpClic.R294OG",
+    scores: [3100, 3550, 4000, 4450, 4900],
     category: "Clicking",
     subCategory: "Dynamic",
     categoryID: 2,
     scenarioID: 6,
   },
   {
-    name: "S4 Glidertrack Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Glide.RRSE7O",
-    scores: [1800, 2100, 2400, 2700, 3000],
+    name: "rA Jumptrack",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.Unans.jumptrac.R241E2",
+    scores: [2100, 2400, 2600, 2800, 3000],
     category: "Tracking",
     subCategory: "Precise",
     categoryID: 3,
     scenarioID: 7,
   },
   {
-    name: "S4 Capsuletrack Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Capsu.RRSDND",
-    scores: [1800, 2150, 2500, 2850, 3200],
+    name: "rA Smoothtrack",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.hebellionaire.XYSmooth.R32JN4",
+    scores: [2150, 2350, 2600, 2800, 3000],
     category: "Tracking",
     subCategory: "Precise",
     categoryID: 3,
     scenarioID: 8,
   },
   {
-    name: "S4 Leaptrack Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Leapt.RRSD8X",
-    scores: [1900, 2250, 2600, 2950, 3300],
+    name: "rA Precisesphere",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.morcaillionaire.rA Preci.R35DLM",
+    scores: [2200, 2400, 2600, 2900, 3200],
     category: "Tracking",
-    subCategory: "HybridTrack",
-    categoryID: 4,
+    subCategory: "Precise",
+    categoryID: 3,
     scenarioID: 9,
   },
   {
-    name: "S4 Airtrack Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Airtr.RRSE27",
-    scores: [2300, 2600, 2850, 3100, 3400],
+    name: "rA Airtrack",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.rA Theo.rA Airtr.R3GBA9",
+    scores: [2100, 2250, 2400, 2600, 2800],
     category: "Tracking",
-    subCategory: "HybridTrack",
+    subCategory: "Reactive",
     categoryID: 4,
     scenarioID: 10,
   },
   {
-    name: "S4 Reactivesphere Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 React.RRSE5O",
-    scores: [1800, 2050, 2300, 2550, 2800],
+    name: "rA Reactivesphere",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.morcaillionaire.rA React.R2KW6C",
+    scores: [1750, 1900, 2050, 2200, 2400],
     category: "Tracking",
     subCategory: "Reactive",
-    categoryID: 5,
+    categoryID: 4,
     scenarioID: 11,
   },
   {
-    name: "S4 Strafetrack Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Straf.RRSE9Z",
-    scores: [1850, 2100, 2350, 2600, 2850],
+    name: "rA Strafetrack",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.morcaillionaire.rA Straf.R35DSK",
+    scores: [2100, 2250, 2400, 2600, 2800],
     category: "Tracking",
     subCategory: "Reactive",
-    categoryID: 5,
+    categoryID: 4,
     scenarioID: 12,
   },
   {
-    name: "S4 Wideswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Wides.RRU4WZ",
-    scores: [131, 139, 147, 155, 163],
+    name: "rA Wideflick",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.rA Unans.rA Widef.R35DDI",
+    scores: [104, 108, 112, 116, 120],
     category: "Switching",
     subCategory: "Flick",
-    categoryID: 6,
+    categoryID: 5,
     scenarioID: 13,
   },
   {
-    name: "S4 Orbswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Orbsw.RRU4VG",
-    scores: [125, 131, 137, 143, 149],
+    name: "rA Speedflick",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.hebebebebebebe.bfts rab.R2IVS9",
+    scores: [125, 130, 135, 140, 145],
     category: "Switching",
     subCategory: "Flick",
-    categoryID: 6,
+    categoryID: 5,
     scenarioID: 14,
   },
   {
-    name: "S4 XYswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 XYswi.RRU4G1",
-    scores: [76, 82, 88, 94, 100],
+    name: "rA Orbflick",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.hebellionaire.41e73264.R352T3",
+    scores: [112, 120, 128, 136, 144],
     category: "Switching",
     subCategory: "Flick",
-    categoryID: 6,
+    categoryID: 5,
     scenarioID: 15,
   },
   {
-    name: "S4 Layerswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Layer.RRU3DN",
-    scores: [75, 80, 85, 90, 95],
+    name: "rA 3Dswitch",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.rA hebe.morcaTS .R26763",
+    scores: [50, 54, 58, 62, 65],
     category: "Switching",
-    subCategory: "Flick",
+    subCategory: "Track",
     categoryID: 6,
     scenarioID: 16,
   },
   {
-    name: "S4 Evaswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Evasw.RRU4LL",
-    scores: [48, 52, 56, 60, 64],
+    name: "rA Waveswitch",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.rA Unans.rA Waves.R35D7E",
+    scores: [48, 51, 54, 57, 60],
     category: "Switching",
-    subCategory: "Flick",
+    subCategory: "Track",
     categoryID: 6,
     scenarioID: 17,
   },
   {
-    name: "S4 Spaceswitch Hard",
-    weapon: "Custom_RevoTracker",
-    id: "CsLevel.Revosect1.S4 Space.RRSETJ",
-    scores: [41, 44, 47, 50, 53],
+    name: "rA XYswitch",
+    weapon: "Custom_rA100hz",
+    id: "CsLevel.rA Unans.rA XYswi.R35D6N",
+    scores: [80, 85, 90, 96, 102],
     category: "Switching",
-    subCategory: "Flick",
+    subCategory: "Track",
     categoryID: 6,
     scenarioID: 18,
-  }
+  },
 ];
 
-export const hardRanks = {
-  2400: "Immortal",
-  2800: "Archon",
-  3200: "Ethereal",
-  3600: "Divine",
-  4000: "Omnipotent",
+export const hardRanksS2 = {
+  1820: "Mythic",
+  2150: "Immortal",
+  2500: "Archon",
+  3020: "Ethereal",
+  3580: "Divine",
 };
-export const hardSubRanks = {
-  200: "Immortal",
-  233.334: "Archon",
-  266.667: "Ethereal",
-  300: "Divine",
-  333.334: "Omnipotent",
+export const hardSubRanksS2 = {
+  150: "Mythic",
+  175: "Immortal",
+  210: "Archon",
+  245: "Ethereal",
+  310: "Divine",
 };
 
-export const hardSubPoints = [200, 233.334, 266.667, 300, 333.334];
-export const hardPoints = [2400, 2800, 3200, 3600, 4000];
+export const hardSubPointsS2 = [150, 175, 210, 245, 310];
+export const hardPointsS2 = [1820, 2150, 2500, 3020, 3580];
 
-export const mediumBench = [
+export const mediumBenchS2 = [
   {
     name: "rA Twoshot Med",
     weapon: "Custom_9mmrAnoADS",
@@ -393,23 +391,23 @@ export const mediumBench = [
   },
 ];
 
-export const mediumRanks = {
+export const mediumRanksS2 = {
   905: "Ace",
   1060: "Legend",
   1350: "Sentinel",
   1710: "Valour",
 };
-export const mediumSubRanks = {
+export const mediumSubRanksS2 = {
   75: "Ace",
   90: "Legend",
   115: "Sentinel",
   145: "Valour",
 };
 
-export const mediumSubPoints = [75, 90, 115, 145];
-export const mediumPoints = [905, 1060, 1350, 1710];
+export const mediumSubPointsS2 = [75, 90, 115, 145];
+export const mediumPointsS2 = [905, 1060, 1350, 1710];
 
-export const easyBench = [
+export const easyBenchS2 = [
   {
     name: "rA Sixshot Easy",
     weapon: "Custom_9mmrAnoADS",
@@ -512,18 +510,18 @@ export const easyBench = [
   },
 ];
 
-export const easyRanks = {
+export const easyRanksS2 = {
   200: "Bronze",
   285: "Silver",
   475: "Gold",
   685: "Platinum",
 };
-export const easySubRanks = {
+export const easySubRanksS2 = {
   20: "Bronze",
   30: "Silver",
   50: "Gold",
   72: "Platinum",
 };
 
-export const easySubPoints = [20, 30, 50, 72];
-export const easyPoints = [200, 285, 475, 685];
+export const easySubPointsS2 = [20, 30, 50, 72];
+export const easyPointsS2 = [200, 285, 475, 685];

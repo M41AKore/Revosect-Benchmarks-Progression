@@ -3,7 +3,7 @@
     <loading-spinner class="mx-auto"></loading-spinner>
   </section>
   <section v-else>
-    <div class="grid grid-cols-4 gap-3 p-3 relative">
+    <div class="grid grid-cols-4 gap-3 p-3 relative" style="background-color: #27272A;">
       <input
         type="text"
         name=""
@@ -44,7 +44,7 @@
           tracking-wide
           transition
           hover:scale-[101%] hover:shadow-xl hover:border hover:border-slate-500
-        "
+        " style="background-color: #7F1D1D;"
         :to="'/tasks/' + task.id"
       >
         <h3 class="text-lg uppercase text-slate-100">

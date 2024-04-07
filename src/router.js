@@ -7,9 +7,8 @@ import TaskSearch from "./pages/TaskSearch.vue";
 import PlayerProfile from "./pages/PlayerProfile.vue";
 import PlayerTasksOverview from "./pages/PlayerTasksOverview.vue";
 import RevosectBenchmarksPage from "./pages/RevosectBenchmarksPage.vue";
-import VoltaicBenchmarksPage from "./pages/VoltaicBenchmarksPage.vue";
+import RevosectBenchmarksPageS2 from "./pages/RevosectBenchmarksPageS2.vue";
 import LeaderboardsPage from "./pages/LeaderboardsPage.vue";
-import VoltaicLeaderboardsPage from "./pages/VoltaicLeaderboardsPage.vue";
 import RevosectLeaderboardsPage from "./pages/RevosectLeaderboardsPage.vue";
 import TaskView from "./pages/TaskView.vue";
 import AboutPage from "./pages/AboutPage.vue";
@@ -48,14 +47,14 @@ const router = createRouter({
           component: PlayerTasksOverview,
         },
         {
-          name: "vt-benches",
-          path: "voltaic",
-          component: VoltaicBenchmarksPage,
-        },
-        {
           name: "ra-benches",
           path: "revosect",
           component: RevosectBenchmarksPage,
+        },
+        {
+          name: "ra-benches-s2",
+          path: "revosect",
+          component: RevosectBenchmarksPageS2,
         },
       ],
     },
@@ -88,11 +87,6 @@ const router = createRouter({
       component: LeaderboardsPage,
       children: [
         { path: "", redirect: { name: "ra-leaderboards" } },
-        {
-          name: "vt-leaderboards",
-          path: "vt",
-          component: VoltaicLeaderboardsPage,
-        },
         {
           name: "ra-leaderboards",
           path: "ra",

@@ -1,6 +1,6 @@
 <template>
-    <div class="min-h-max">
-        <!-- <div
+    <div class="min-h-max" style="background-color: #27272A;">
+        <!-- <div 
       v-if="!RABenchmarks.overallPoints"
       class="grid place-items-center p-10"
     >
@@ -15,7 +15,7 @@
                     :selected-tab="currentTab"
                 >
                     <li
-                        class="px-4 py-1 transition hover:bg-slate-600"
+                        class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
                         v-for="(element, index) in dropdownElements"
                         :key="index"
                         @click="handleDropdownSelect(index)"
@@ -59,8 +59,9 @@
                         <div
                             class="flex flex-col items-center justify-center tracking-wide text-slate-200"
                         >
-                            <p class="text-lg font-bold">SubCategories</p>
-                            <ul class="mt-4 grid grid-cols-2 gap-1">
+                            <p class="text-lg font-bold">Categories</p>
+
+                            <ul id="catPart" class="mt-4 grid grid-cols-2 gap-1">
                                 <li
                                     v-for="(item, index) in subCategoryPoints"
                                     :key="index"
@@ -77,13 +78,13 @@
             </div>
 
             <section class="relative p-4" id="benchmark-table">
-                <header class="grid grid-cols-12 bg-slate-700 py-2 pr-4 pl-16">
+                <header class="grid grid-cols-12 bg-slate-700 py-2 pr-4 pl-16" style="background-color: #7F1D1D;">
                     <p class="col-span-4 ml-2">Scenario</p>
                     <p>Score</p>
                     <p class="col-span-3">Rank</p>
                     <p class="col-span-2">Points</p>
                 </header>
-                <div
+                <div style="background-color: #333;"
                     v-for="(bench, index) in RABenchmarks.benchmarks"
                     :key="index"
                     class="mt-1 ml-14 grid grid-cols-12 bg-slate-800 px-4 py-2 text-slate-200"
@@ -254,18 +255,16 @@ import {
     taskDeepLink,
 } from "@/helpers/functions.js";
 export default {
-    data() {
+    data() {      
         return {
             replayLoading: false,
             currentTabIndex: 2,
             categories: ["Clicking", "Tracking", "Switching"],
             subCategories: [
-                "Static",
-                "Dynamic",
-                "Precise",
-                "Reactive",
-                "Flick",
-                "Track",
+                "Clicking",
+               // "Dynamic",
+                "Tracking",
+                "Switching",
             ],
             dropdownElements: ["Easy", "Medium", "Hard"],
         };
@@ -286,15 +285,15 @@ export default {
             switch (this.currentTab.value) {
                 case "hard":
                     return [
-                        "Mythic",
                         "Immortal",
                         "Archon",
                         "Ethereal",
                         "Divine",
+                        "Omnipotent",
                     ];
 
                 case "medium":
-                    return ["Ace", "Legend", "Sentinel", "Valour"];
+                    return ["Ace", "Legend", "Sentinel", "Valour", "Mythic"];
 
                 case "easy":
                     return ["Bronze", "Silver", "Gold", "Platinum"];
@@ -340,7 +339,13 @@ export default {
             };
         },
         subCategoryPoints() {
-            return this.RABenchmarks.subCategoryPoints;
+            let fixed = [];
+            for(let i=0;i<this.RABenchmarks.subCategoryPoints.length;i++) {
+                //fixed.push(this.RABenchmarks.subCategoryPoints[i].toFixed(3));
+                fixed.push(Math.floor(this.RABenchmarks.subCategoryPoints[i]));
+            }
+
+            return fixed;
         },
     },
     methods: {
@@ -349,6 +354,39 @@ export default {
         },
         handleDropdownSelect(index) {
             this.currentTabIndex = index;
+
+            /*if(this.currentTab.value == "hard") {
+            return {
+            replayLoading: false,
+            currentTabIndex: 2,
+            categories: ["Clicking", "Tracking", "Switching"],
+            subCategories: [
+                "Clicking",
+                "Tracking",
+                "Switching",
+            ],
+            dropdownElements: ["Easy", "Medium", "Hard"],
+        };
+        }
+        else {
+            return {
+            replayLoading: false,
+            currentTabIndex: 2,
+            categories: ["Clicking", "Tracking", "Switching"],
+            subCategories: [
+                "Static",
+                "Dynamic",
+                "Precise",
+                "HybridTrack",
+                "Reactive",
+                "SpeedTS",
+                "HybridTS",
+                "TrackTS",
+            ],
+            dropdownElements: ["Easy", "Medium", "Hard"],
+        };
+        }*/
+
         },
         toggleBenchDetails(bench) {
             bench.detailsOpen = !bench.detailsOpen;
@@ -378,6 +416,8 @@ export default {
         },
     },
 };
+
+
 </script>
 
 <style scoped>

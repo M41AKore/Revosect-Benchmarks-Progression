@@ -62,9 +62,9 @@
       </button>
     </section>
 
-    <div class="relative z-10" id="profile-nav">
+    <div class="relative z-10" id="profile-nav" >
       <ul class="flex">
-        <li v-for="(tab, key) in tabs" :key="tab">
+        <li v-for="(tab, key) in tabs" :key="tab" >
           <router-link
             class="
               py-2
@@ -73,7 +73,7 @@
               inline-block
               border border-slate-600
               hover:bg-slate-500
-            "
+            "  style="background-color: #27272A;"
             :to="{ name: tab }"
             @click="displayRoute"
           >
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+//#27272A
 // import axios from "axios";
 import { mapGetters } from "vuex";
 import * as queries from "../helpers/queries.js";
@@ -104,33 +105,34 @@ export default {
       tabs: {
         Overview: "profile-overview",
         Benchmarks: "ra-benches",
+        Benchmarks_S2: "ra-benches-s2",
       },
     };
   },
   computed: {
     ...mapGetters([
-      "VTAdvanced",
-      "VTIntermediate",
-      "VTNovice",
       "RAHard",
       "RAMedium",
       "RAEasy",
+      "RAHardS2",
+      "RAMediumS2",
+      "RAEasyS2",
       "currentPlayerTasks",
       "currentPlayerInfo",
     ]),
-    overallRankVT() {
-      return this.VTAdvanced.overallRank != "Unranked"
-        ? this.VTAdvanced.overallRank
-        : this.VTIntermediate.overallRank != "Unranked"
-        ? this.VTIntermediate.overallRank
-        : this.VTNovice.overallRank;
-    },
     overallRankRA() {
       return this.RAHard.overallRank != "Unranked"
         ? this.RAHard.overallRank
         : this.RAMedium.overallRank != "Unranked"
         ? this.RAMedium.overallRank
         : this.RAEasy.overallRank;
+    },
+    overallRankRAS2() {
+      return this.RAHardS2.overallRank != "Unranked"
+        ? this.RAHardS2.overallRank
+        : this.RAMediumS2.overallRank != "Unranked"
+        ? this.RAMediumS2.overallRank
+        : this.RAEasyS2.overallRank;
     },
     playerSkill() {
       if (this.currentPlayerInfo.skill) {
@@ -208,8 +210,8 @@ export default {
         "updateCurrentPlayerTasks",
         plays_agg.aimlab.plays_agg
       );
-      this.$store.dispatch("setVTBenches");
       this.$store.dispatch("setRABenches");
+      this.$store.dispatch("setRABenchesS2");
     }
   },
 };
