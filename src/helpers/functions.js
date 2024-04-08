@@ -185,9 +185,12 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
                 filtered.push(top2);
             }
             subCategoryPointsList = filtered;
-            console.log(filtered);
+            //console.log(filtered);
         }
-        else if(season == "s4") {
+        else if(season == "s4" && mode != "easy") {
+            //console.log(subCategoryPointsList.length);
+            //console.log(subCategoryPointsList);
+            
             let clicking = subCategoryPointsList[0].concat(subCategoryPointsList[1]);
             let tracking = subCategoryPointsList[2].concat(subCategoryPointsList[3]).concat(subCategoryPointsList[4]);
             let switching = subCategoryPointsList[5].concat(subCategoryPointsList[6]).concat(subCategoryPointsList[7]);
@@ -618,3 +621,92 @@ export function organizeLeaderboard(playerList, fullBench, mode) {
 //     console.log(benchmarkData);
 //     leaderboardData.push(benchmarkData);
 // });
+
+
+export async function kvksAPIcall(steamID64, leaderboardID, scenarioName) {
+    //leaderboardID = '666';
+    //steamID64 = '76561197983102874';
+
+const postData = {
+    leaderboard_id: leaderboardID,
+    steam_id: steamID64,
+    steam_ids: [steamID64]
+};
+
+const apiUrl = 'https://kovaaks.com/sa_leaderboard_scores_steam_ids_get';
+
+const response = await axios.post(apiUrl, postData, {
+    headers: {
+        'Accept': '*/*',
+        'User-Agent': 'X-UnrealEngine-Agent',
+        'Authorization': 'Bearer 140000007407386b2c618e1e3eb4425b01001001a9a90b66180000000100000002000000f15b782a2e4453214f67070001000000b200000032000000040000003eb4425b01001001ce930c00c30e5fae0138a8c000000000aba90b662b5927660100b62e080000000000c9f0e8dc401c8594ca19563a6a6989c4d0d865d8538663ff4329600d3bcbc221ef3223dd25966fb3ccb71fd2a3ee94a8331ed3373c77b3fe4eab5aca10f564e4f9b9fa9e2808581ec851b9966dc30f204f6a43865979ab316c097e27109dcd87b15d72acf74e61511abbb8973c414dba51331987af9815d626367076bfd5f574',
+        'GSTVersion': '3.4.2.2024-02-28-14-22-08-791139f13a',
+        'Content-Type': 'application/json'
+    }
+});
+
+if(response != null) {
+    //console.log(response);
+    const results = {
+        scenario: scenarioName,
+        id: leaderboardID,
+        score: response.data[0] == null ? 0 : (response.data[0].score / 100).toFixed(2),
+        rank: response.data[0] == null ? "unranked" : response.data[0].rank,
+    };
+    //console.log(results);
+    return results;
+}
+
+/*.then(response => {
+    //console.log('Response:', response.data);
+    //return response.data;
+
+    
+}).catch(error => {
+    console.error('Error:', error);
+});*/
+}
+
+
+export function KVKScalculateBenchmark(scenarioData, tier, season) {
+    console.log("kvkscalculation!")
+    const plainArray = [...scenarioData];
+
+    for(let i=0;i<plainArray.length;i++) {
+        const plainData = { ...plainArray[i] };
+        console.log(plainData);
+        
+    }
+
+    let totalPoints = 0;
+    let finalRank = 'unranked';
+
+
+    return {
+        totalPoints,
+        finalRank,
+    };
+}
+
+export function setCookie(name, value) {
+    document.cookie = name + "=" + value + "; path=/";
+}
+
+export function getCookie(name) {
+    var nameEQ = name + "=";
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1, cookie.length);
+        }
+        if (cookie.indexOf(nameEQ) === 0) {
+            return cookie.substring(nameEQ.length, cookie.length);
+        }
+    }
+    return null;
+}
+
+export function isNullOrEmpty(str) {
+    return !str || str.trim() === '';
+}

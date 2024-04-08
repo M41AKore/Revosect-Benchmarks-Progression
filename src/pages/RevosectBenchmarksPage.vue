@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-max" style="background-color: #27272A;">
+    <div class="min-h-max" style="background-color: #111;"><!-- 27272A -->
         <!-- <div 
       v-if="!RABenchmarks.overallPoints"
       class="grid place-items-center p-10"
@@ -10,10 +10,8 @@
             <div
                 class="mt-4 flex max-h-96 w-full justify-center gap-4 font-oswald"
             >
-                <dropdown
-                    class="ml-4 mr-auto self-start"
-                    :selected-tab="currentTab"
-                >
+                <div class="ml-4 mr-auto self-start" style="display: flex; flex-direction: row;">
+                    <dropdown class="ml-4 mr-auto self-start" :selected-tab="currentTab">
                     <li
                         class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
                         v-for="(element, index) in dropdownElements"
@@ -23,6 +21,18 @@
                         {{ element }}
                     </li>
                 </dropdown>
+                <dropdown class="ml-4 mr-auto self-start" :selected-tab="currentGame">
+                    <li
+                        class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
+                        v-for="(element, index) in gameDropdownElements"
+                        :key="index"
+                        @click="handleGameDropdownSelect(index)"
+                    >
+                        {{ element }}
+                    </li>
+                </dropdown>
+                </div>
+                
                 <div class="my-2 mr-auto flex gap-20">
                     <!--  -->
                     <div class="mr-auto flex gap-20">
@@ -76,6 +86,11 @@
                 </div>
                 <!-- <span class="font-bold">{{ item.energy }}</span> ({{ item.rank }}) -->
             </div>
+
+
+            <!-- --------------------------------------------------------------------- -->
+            <!-- ------------------------ SCENARIO RESULTS --------------------------- -->
+            <!-- --------------------------------------------------------------------- -->
 
             <section class="relative p-4" id="benchmark-table">
                 <header class="grid grid-cols-12 bg-slate-700 py-2 pr-4 pl-16" style="background-color: #7F1D1D;">
@@ -248,6 +263,7 @@
     <!-- text-mythic bg-mythic grid-cols-5 grid-cols-4 -->
 </template>
 <script>
+import axios from 'axios';
 import * as ra from "../helpers/revosectData.js";
 import {
     findReplay,
@@ -262,11 +278,12 @@ export default {
             categories: ["Clicking", "Tracking", "Switching"],
             subCategories: [
                 "Clicking",
-               // "Dynamic",
                 "Tracking",
                 "Switching",
             ],
             dropdownElements: ["Easy", "Medium", "Hard"],
+            currentGameIndex: 0,
+            gameDropdownElements: ["Aimlabs", "KovaaK's"],
         };
     },
     computed: {
@@ -275,34 +292,35 @@ export default {
         },
         currentTab() {
             return {
-                value: this.dropdownElements[
-                    this.currentTabIndex
-                ].toLowerCase(),
+                value: this.dropdownElements[this.currentTabIndex].toLowerCase(),
                 label: this.dropdownElements[this.currentTabIndex],
             };
         },
+        currentGame() {
+            return { 
+                value: this.gameDropdownElements[this.currentGameIndex].toLowerCase(),
+                label: this.gameDropdownElements[this.currentGameIndex],
+            }
+        },
         rankList() {
             switch (this.currentTab.value) {
-                case "hard":
-                    return [
-                        "Immortal",
-                        "Archon",
-                        "Ethereal",
-                        "Divine",
-                        "Omnipotent",
-                    ];
-
-                case "medium":
-                    return ["Ace", "Legend", "Sentinel", "Valour", "Mythic"];
-
-                case "easy":
-                    return ["Bronze", "Silver", "Gold", "Platinum"];
+                case "hard": return [ "Immortal", "Archon", "Ethereal", "Divine", "Omnipotent" ];
+                case "medium": return ["Ace", "Legend", "Sentinel", "Valour", "Mythic"];
+                case "easy": return ["Bronze", "Silver", "Gold", "Platinum"];               
             }
         },
         pointList() {
+            //console.log(this.currentTabIndex.value);
             switch (this.currentTab.value) {
                 case "hard":
-                    return ra.hardSubPoints;
+                    /*console.log(this.currentGameIndex.value);
+                    if(this.currentGameIndex.value == "KovaaK's") {
+                        console.log("get kvks!");
+                    }
+                    else if(this.currentGameIndex.value = "Aimlabs") {
+                        return ra.hardSubPoints;
+                    } */
+                    return ra.hardSubPoints;            
                 case "medium":
                     return ra.mediumPoints;
                 case "easy":
@@ -312,6 +330,7 @@ export default {
         RABenchmarks() {
             switch (this.currentTab.value) {
                 case "hard":
+                    //console.log("is hard!");
                     return this.$store.getters.RAHard;
                 case "medium":
                     return this.$store.getters.RAMedium;
@@ -344,7 +363,6 @@ export default {
                 //fixed.push(this.RABenchmarks.subCategoryPoints[i].toFixed(3));
                 fixed.push(Math.floor(this.RABenchmarks.subCategoryPoints[i]));
             }
-
             return fixed;
         },
     },
@@ -354,39 +372,9 @@ export default {
         },
         handleDropdownSelect(index) {
             this.currentTabIndex = index;
-
-            /*if(this.currentTab.value == "hard") {
-            return {
-            replayLoading: false,
-            currentTabIndex: 2,
-            categories: ["Clicking", "Tracking", "Switching"],
-            subCategories: [
-                "Clicking",
-                "Tracking",
-                "Switching",
-            ],
-            dropdownElements: ["Easy", "Medium", "Hard"],
-        };
-        }
-        else {
-            return {
-            replayLoading: false,
-            currentTabIndex: 2,
-            categories: ["Clicking", "Tracking", "Switching"],
-            subCategories: [
-                "Static",
-                "Dynamic",
-                "Precise",
-                "HybridTrack",
-                "Reactive",
-                "SpeedTS",
-                "HybridTS",
-                "TrackTS",
-            ],
-            dropdownElements: ["Easy", "Medium", "Hard"],
-        };
-        }*/
-
+        },
+        handleGameDropdownSelect(index) {
+            this.currentGameIndex = index;
         },
         toggleBenchDetails(bench) {
             bench.detailsOpen = !bench.detailsOpen;
@@ -414,10 +402,9 @@ export default {
             }
             this.replayLoading = false;
         },
+        
     },
 };
-
-
 </script>
 
 <style scoped>

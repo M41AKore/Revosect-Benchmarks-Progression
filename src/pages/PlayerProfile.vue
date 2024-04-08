@@ -46,7 +46,8 @@
           /></span>
         </div>
       </base-card>
-      <button
+      <div style="display:flex;flex-direction: column;" >
+        <button
         class="
           right-0
           border-2 border-slate-500
@@ -60,6 +61,22 @@
       >
         Switch Profile
       </button>
+      <button
+        class="
+          right-0
+          border-2 border-slate-500
+          px-6
+          py-2
+          rounded
+          transition
+          hover:bg-slate-500
+        "
+        @click="openPopup()">
+        Set Profile
+      </button>
+      <Popup v-if="showPopup"/>
+      </div>
+      
     </section>
 
     <div class="relative z-10" id="profile-nav" >
@@ -94,9 +111,15 @@
 // import axios from "axios";
 import { mapGetters } from "vuex";
 import * as queries from "../helpers/queries.js";
+import * as functions from "../helpers/functions.js";
+import * as revosectData from "../helpers/revosectData.js";
+import Popup from './ProfileDataPopup.vue';
 export default {
   props: {
     username: String,
+  },
+  components: {
+    Popup
   },
   data() {
     return {
@@ -107,6 +130,8 @@ export default {
         Benchmarks: "ra-benches",
         Benchmarks_S2: "ra-benches-s2",
       },
+      kvksScores: [],
+      showPopup: false
     };
   },
   computed: {
@@ -167,6 +192,14 @@ export default {
     displayRoute() {
       // console.log(this.$route);
     },
+    openPopup() {
+      if(this.showPopup) {
+        this.showPopup = false;
+      }
+      else {
+        this.showPopup = true;
+      }
+    },
   },
   //Fetching the Player ID and Username again
   // Assigning the fetched data to our component
@@ -177,10 +210,7 @@ export default {
 
     this.playerInfo = {};
     this.isLoading = true;
-    let aimlabProfile = await queries.APIFetch(queries.GET_USER_INFO, {
-      username: this.username,
-    });
-
+    let aimlabProfile = await queries.APIFetch(queries.GET_USER_INFO, { username: this.username, });
     if (aimlabProfile != null) {
       this.playerInfo = {
         username: aimlabProfile.aimlabProfile.username,
@@ -210,6 +240,23 @@ export default {
         "updateCurrentPlayerTasks",
         plays_agg.aimlab.plays_agg
       );
+
+      let cookiefiedSteamID = functions.getCookie('steamid64');
+      console.log("steamid from cookies: " + cookiefiedSteamID);
+      if(!functions.isNullOrEmpty(cookiefiedSteamID)) {
+        let kvksS4 = revosectData.s4HardKvks;
+        if(kvksS4 != null) {
+          for(let i=0;i<kvksS4.length;i++) {
+            let kvksScore = await functions.kvksAPIcall(cookiefiedSteamID, kvksS4[i].leaderboardID, kvksS4[i].name);
+            if(kvksScore != null) this.kvksScores.push(kvksScore);
+          }
+
+          if(this.kvksScores.length > 0) {
+            const results = functions.KVKScalculateBenchmark(this.kvksScores, "hard", "s4");
+          }
+        }
+      }
+
       this.$store.dispatch("setRABenches");
       this.$store.dispatch("setRABenchesS2");
     }

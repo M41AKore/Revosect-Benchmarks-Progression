@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-max" style="background-color: #27272A;">
+    <div class="min-h-max" style="background-color: #111;"><!-- 27272A -->
         <div>
             <div
                 class="mt-4 flex max-h-96 w-full justify-center gap-4 font-oswald"

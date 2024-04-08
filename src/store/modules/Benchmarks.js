@@ -1,6 +1,6 @@
 import {
   calculateRevosectBenchmarks,
-  calculateRevosectBenchmarksS2,
+  KVKScalculateBenchmark,
 } from "../../helpers/functions";
 import _ from "lodash";
 
@@ -146,6 +146,13 @@ export default {
         "easy",
         "s4",
       );
+
+      /*let RAHardkvks = KVKScalculateBenchmark(
+        context.rootGetters.kvksScores,
+        "hard",
+        "s4kvks",
+      );*/
+
       context.commit("setRAEasy", RAEasy);
       context.commit("setRAMedium", RAMedium);
       context.commit("setRAHard", RAHard);
