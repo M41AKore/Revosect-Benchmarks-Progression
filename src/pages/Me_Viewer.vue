@@ -35,9 +35,23 @@
           <span>Unique Tasks Played - {{ tasksPlayed }}</span>
           <span>Total Play Count - {{ totalPlays }}</span>        
           <span
-            >rA Rank - {{ overallRankRA }}
+            >rA S4 Rank - {{ overallRankRA }}
             <img
-              :src="`../../rank-img/ra/${imagePath(overallRankRA)}.png`"
+              :src="`../../rank-img/ra/s4/${imagePath(overallRankRA)}.png`"
+              class="h-5 inline"
+              alt=""
+          /></span>
+          <span
+            >rA S2 Rank - {{ overallRankRAS2 }}
+            <img
+              :src="`../../rank-img/ra/s2/${imagePath(overallRankRAS2)}.png`"
+              class="h-5 inline"
+              alt=""
+          /></span>
+          <span
+            >rA S4 Kvks - {{ overallRankRAS4KVKS }}
+            <img
+              :src="`../../rank-img/ra/s2/${imagePath(overallRankRAS4KVKS)}.png`"
               class="h-5 inline"
               alt=""
           /></span>
@@ -122,6 +136,7 @@ export default {
       "RAMediumS2",
       "RAEasyS2",
       "currentPlayerTasks",
+      "RAKvksHard",
     ]),
     overallRankRA() {
       return this.RAHard.overallRank != "Unranked"
@@ -136,6 +151,9 @@ export default {
         : this.RAMediumS2.overallRank != "Unranked"
         ? this.RAMediumS2.overallRank
         : this.RAEasyS2.overallRank;
+    },
+    overallRankRAS4KVKS() {
+      return this.RAKvksHard.overallRank != "Unranked" ? this.RAKvksHard.overallRank : "Unranked";
     },
     playerSkill() {
       if (this.playerInfo.skill) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-10">
+    <div class="space-y-10" style="background-color: orange;">
         <base-card class="flex items-center gap-10">
             <div>
                 <p class="mb-1 ml-1">Benchmark</p>
@@ -202,7 +202,7 @@ export default {
             if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
             if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
             this.leaderboardLoading = true;
-            this.$store.dispatch("fetchLeaderboard", bench);
+            this.$store.dispatch("fetchLeaderboard", { bench, season: "s4" });
         },
         selectedLeaderboard(newArr) {
             if (newArr.length) {
@@ -327,7 +327,7 @@ export default {
         if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
         if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
         this.leaderboardLoading = true;
-        this.$store.dispatch("fetchLeaderboard", bench);
+        this.$store.dispatch("fetchLeaderboard", { bench, season: "s4" });
     },
 };
 </script>

@@ -57,12 +57,11 @@
                             </p>
                             <div class="flex items-center gap-1">
                                 <span class="-mt-1">Overall Points :</span>
-                                <span
-                                    class="font-bold tracking-wider"
+                                <span class="font-bold tracking-wider"
                                     :class="
                                         colorLookup[RABenchmarks.overallRank]
                                     "
-                                    >{{ RABenchmarks.overallPoints }}</span
+                                    >{{ formatPoints(RABenchmarks.overallPoints) }}</span
                                 >
                             </div>
                         </div>
@@ -73,12 +72,12 @@
 
                             <ul id="catPart" class="mt-4 grid grid-cols-2 gap-1">
                                 <li
-                                    v-for="(item, index) in subCategoryPoints"
+                                    v-for="(item, index) in RABenchmarks.subCategoryPoints"
                                     :key="index"
                                     class="flex items-center gap-2 pr-4"
                                 >
                                     {{ subCategories[index] }} :
-                                    <span class="font-bold">{{ item }}</span>
+                                    <span class="font-bold">{{ formatPoints(item) }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -105,31 +104,20 @@
                     class="mt-1 ml-14 grid grid-cols-12 bg-slate-800 px-4 py-2 text-slate-200"
                 >
                     <p class="col-span-4">{{ bench.name }}</p>
-                    <p class="font-semibold tracking-wide">
-                        {{ bench.maxScore }}
-                    </p>
-                    <p
-                        class="col-span-3 flex gap-2"
-                        :class="colorLookup[bench.rank]"
-                    >
-                        <img
-                            class="h-5 self-center"
-                            :src="getImagePath(bench.rank)"
-                            alt=""
-                        />
+                    <p class="font-semibold tracking-wide">{{ bench.maxScore }}</p>
+                    <p class="col-span-3 flex gap-2" :class="colorLookup[bench.rank]">
+                        <img class="h-5 self-center" :src="getImagePath(bench.rank)" alt="" />
                         {{ bench.rank }}
                     </p>
-                    <div
-                        class="relative col-span-3 flex items-center justify-between"
-                    >
-                        <span class="absolute left-1/2 z-10 -translate-x-1/2 transform text-right"
-                            v-if="bench.points"
-                            >{{ bench.points.toFixed(3) }}</span> <!--Math.floor() for no decimals -->
+                    <div class="relative col-span-3 flex items-center justify-between">
+                        <!--Math.floor() for no decimals-->
+                        <span class="absolute left-1/2 z-10 -translate-x-1/2 transform text-right" :class="colorLookupBarText[bench.rank]">{{ formatPoints(bench.points) }}</span>
                         <progress-bar
                             class="h-5 w-full rounded-sm bg-slate-600"
                             :value="bench.progress"
-                            color="bg-red-700"
+                            :color="colorLookupBar[bench.rank]" 
                         ></progress-bar>
+                        <!-- bg-red-700 -->
                         <!-- colors: bg-grandmaster bg-nova bg-celestial bg-astra bg-iron bg-bronze bg-silver bg-gold bg-platinum bg-diamond bg-jade bg-master -->
                     </div>
                     <p
@@ -331,18 +319,54 @@ export default {
                 Archon: "text-archon",
                 Ethereal: "text-ethereal",
                 Divine: "text-divine",
+                Omnipotent: "text-omnipotent",
             };
         },
-        subCategoryPoints() {
+        colorLookupBar() {
+            return {
+                Iron: "bg-iron",
+                Bronze: "bg-bronze",
+                Silver: "bg-silver",
+                Gold: "bg-gold",
+                Platinum: "bg-platinum",
+                Mythic: "bg-mythic",
+                Immortal: "bg-immortal",
+                Archon: "bg-archon",
+                Ethereal: "bg-ethereal",
+                Divine: "bg-divine_opposite",
+                Omnipotent: "bg-omnipotent",
+            };
+        },
+        colorLookupBarText() {
+            return {
+                Iron: "text-iron_opposite",
+                Bronze: "text-bronze_opposite",
+                Silver: "text-silver_opposite",
+                Gold: "text-gold_opposite",
+                Platinum: "text-platinum_opposite",
+                Mythic: "text-mythic_opposite",
+                Immortal: "text-immortal_opposite",
+                Archon: "text-archon_opposite",
+                Ethereal: "text-ethereal_opposite",
+                Divine: "text-divine",
+                Omnipotent: "text-omnipotent_opposite",
+            };
+        },
+        /*subCategoryPoints() {
             let fixed = [];
             for(let i=0;i<this.RABenchmarks.subCategoryPoints.length;i++) {
                 //fixed.push(this.RABenchmarks.subCategoryPoints[i].toFixed(3));
                 fixed.push(Math.floor(this.RABenchmarks.subCategoryPoints[i]));
             }
             return fixed;
-        },
+        },*/
     },
     methods: {
+        formatPoints(points) {
+            if(points == null || points == undefined) return 0;
+            if (Number.isInteger(points)) return points;
+            else return points.toFixed(3);
+        },
         getImagePath(rank) {
             if(rank != null && !isNullOrEmpty(rank)) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
         },

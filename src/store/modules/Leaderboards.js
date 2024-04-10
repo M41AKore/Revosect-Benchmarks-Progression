@@ -68,10 +68,13 @@ export default {
     },
   },
   actions: {
-    async fetchLeaderboard(context, payload, season) {
+    async fetchLeaderboard(context, payload) {
+      const { bench, season } = payload;
+
+
       let ldb = null;
       let fullBench = null;
-      switch (payload) {
+      switch (bench) {
         case "hard":
           fullBench = hardBench;
           break;
@@ -83,15 +86,16 @@ export default {
           break;
       }
       let playerList = {};
-      for (let bench of fullBench) {
+      for (let b of fullBench) {
         const worker = new Worker("/scripts/leaderboard-worker.js");
         worker.onmessage = (event) => {
           playerList[event.data[1]] = event.data[0];
           if (Object.entries(playerList).length == fullBench.length) {
 
+            console.log(playerList.length + ", " + fullBench.length);
 
-            ldb = organizeLeaderboard(playerList, fullBench, payload, season);
-            switch (payload) {
+            ldb = organizeLeaderboard(playerList, fullBench, bench, season);
+            switch (bench) {
               case "hard":
                 context.commit("setHardLdb", ldb);
                 break;

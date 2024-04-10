@@ -199,14 +199,14 @@ export const hardRanks = {
   3600: "Divine",
   4000: "Omnipotent",
 };
-/*export const hardSubRanks = {
+export const hardSubRanks = {
   200: "Immortal",
   233.334: "Archon",
   266.667: "Ethereal",
   300: "Divine",
   333.334: "Omnipotent",
-};*/
-export const hardSubRanks = new Map([
+};
+export const hardSubRanksMap = new Map([
   [200, "Immortal"],
   [233.334, "Archon"],
   [266.667, "Ethereal"],

@@ -1,9 +1,9 @@
 <template>
-  <section v-if="isLoading" class="grid items-center py-4">
+  <section v-if="isLoading" class="grid items-center py-4" style="background-color: #111;">
     <loading-spinner class="mx-auto"></loading-spinner>
   </section>
-  <section v-else>
-    <div class="grid grid-cols-4 gap-3 p-3 relative" style="background-color: #27272A;">
+  <section v-else style="background-color: #111;">
+    <div class="grid grid-cols-4 gap-3 p-3 relative">
       <input
         type="text"
         name=""

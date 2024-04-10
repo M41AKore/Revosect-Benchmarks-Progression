@@ -3,6 +3,7 @@ import {
     hardSubPoints,
     hardPoints,
     hardSubRanks,
+    hardSubRanksMap,
     hardRanks,
     mediumPoints,
     mediumRanks,
@@ -43,7 +44,7 @@ import {
     GET_TASK_BY_ID,
     GET_USER_PLAYS_AGG,
 } from "./queries.js";
-import _ from "lodash";
+import _, { isEqual } from "lodash";
 import axios from "axios";
 
 //UTILITY FUNCTIONS
@@ -131,19 +132,19 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     let benchData = null;
     switch (mode) {
         case "hard":
-            if(season == "s4") benchData = hardBench;
-            else if(season == "s2") benchData = hardBenchS2;
+            if (season == "s4") benchData = hardBench;
+            else if (season == "s2") benchData = hardBenchS2;
             break;
         case "medium":
-            if(season == "s4") benchData = mediumBench;
-            else if(season == "s2") benchData = mediumBenchS2;
+            if (season == "s4") benchData = mediumBench;
+            else if (season == "s2") benchData = mediumBenchS2;
             break;
         case "easy":
-            if(season == "s4") benchData = easyBench;
-            else if(season == "s2") benchData = easyBenchS2;
+            if (season == "s4") benchData = easyBench;
+            else if (season == "s2") benchData = easyBenchS2;
     }
 
-    if(benchData == null) return;
+    if (benchData == null) return;
 
     //Filtering out the benchmark scenarios the player has played from the provided full list of played scenarios
     let playedBenchmarks = playerData.tasks.filter((n) =>
@@ -181,24 +182,24 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             return item.reduce((acc, curr) => acc + curr);
         });
     } else {
-        if(season == "s2") {
+        if (season == "s2") {
             let filtered = [];
-            for(let i=0;i<subCategoryPointsList.length;i++) {
+            for (let i = 0; i < subCategoryPointsList.length; i++) {
                 let top2 = subCategoryPointsList[i].sort((a, b) => b - a).slice(0, 2);
                 filtered.push(top2);
             }
             subCategoryPointsList = filtered;
         }
-        else if(season == "s4" && mode != "easy") {
+        else if (season == "s4" && mode != "easy") {
             let clicking = subCategoryPointsList[0].concat(subCategoryPointsList[1]);
             let tracking = subCategoryPointsList[2].concat(subCategoryPointsList[3]).concat(subCategoryPointsList[4]);
             let switching = subCategoryPointsList[5].concat(subCategoryPointsList[6]).concat(subCategoryPointsList[7]);
-        
+
             clicking = clicking.sort((a, b) => b - a).slice(0, 4);
             tracking = tracking.sort((a, b) => b - a).slice(0, 4);
             switching = switching.sort((a, b) => b - a).slice(0, 4);
-            subCategoryPointsList = [clicking, tracking, switching];              
-        }     
+            subCategoryPointsList = [clicking, tracking, switching];
+        }
     }
 
     aggregateSubCategoryPoints = subCategoryPointsList.map((category) => {
@@ -208,7 +209,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     let overallPoints = aggregateSubCategoryPoints.reduce(
         (acc, curr) => acc + curr
     );
-    overallPoints = Math.floor(overallPoints);
+    //overallPoints = Math.floor(overallPoints);
 
     //Check if player is valour/platinum to add excess points to the total
     /*if (mode != "hard") {
@@ -232,34 +233,34 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     let basePoints = 0;
     switch (mode) {
         case "hard":
-            if(season == "s4") {
+            if (season == "s4") {
                 benchmarkPointsList = hardPoints;
                 benchmarkRankList = hardRanks;
             }
-            else if(season == "s2") {
+            else if (season == "s2") {
                 benchmarkPointsList = hardPointsS2;
                 benchmarkRankList = hardRanksS2;
-            }           
+            }
             break;
         case "medium":
-            if(season == "s4") {
+            if (season == "s4") {
                 benchmarkPointsList = mediumPoints;
                 benchmarkRankList = mediumRanks;
             }
-            else if(season == "s2") {
+            else if (season == "s2") {
                 benchmarkPointsList = mediumPointsS2;
                 benchmarkRankList = mediumRanksS2;
-            }      
+            }
             break;
         case "easy":
-            if(season == "s4") {
+            if (season == "s4") {
                 benchmarkPointsList = easyPoints;
                 benchmarkRankList = easyRanks;
             }
-            else if(season == "s2") {
+            else if (season == "s2") {
                 benchmarkPointsList = easyPointsS2;
                 benchmarkRankList = easyRanksS2;
-            }      
+            }
             break;
     }
 
@@ -280,7 +281,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             overallRank = "Divinity";
         }
     }
-    else if(overallRank == "Omnipotent" && checkOmnipotency(allPointsList)) overallRank = "Omnipotence";
+    else if (overallRank == "Omnipotent" && checkOmnipotency(allPointsList)) overallRank = "Omnipotence";
 
     return {
         overallPoints,
@@ -368,7 +369,21 @@ function calculateRankRA(bench, userTask, benchRanks, benchPoints) {
         let perPoint =
             (benchPoints[arrSize] - benchPoints[arrSize - 1]) /
             (bench.scores[arrSize] - bench.scores[arrSize - 1]);
+
+
+
         rank = benchRanks[points];
+
+        /*if(benchRanks == hardSubRanks) {
+            let foundEntry = [...benchRanks.entries()].find(entry => entry[0] === points);
+            if (foundEntry) {
+                let [key, value] = foundEntry;
+                console.log(`Found item: Key = ${key}, Value = ${value}`);
+              } else {
+                console.log(`Item with key ${numberToFind} not found`);
+              }
+        }*/
+
         points += Math.floor(playerDiff * perPoint);
         progress = 100;
     } else {
@@ -470,6 +485,9 @@ function checkExcessPoints(
 }
 
 export function organizeLeaderboard(playerList, fullBench, mode, season) {
+
+    //console.log("mode:" + mode, ", season: " + season);
+
     for (let task of fullBench) {
         let index = playerList[task.id].length;
         for (let i = 0; i < playerList[task.id].length; i++) {
@@ -522,11 +540,12 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
             });
         });
         leaderboard.forEach((player) => {
-            let points = {};
+            /*let points = {};
             player.subCategoryPoints.forEach((item, index) => {
                 points[categories[index]] = item;
-            });
-            player.subCategoryPoints = points;
+            });*/
+            player.subCategoryPoints.push(0);
+            //player.subCategoryPoints = points;
         });
         leaderboard = leaderboard.sort(
             (a, b) => b.overallPoints - a.overallPoints
@@ -617,26 +636,33 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
 
 
 
+
+
+
+/*********************************************
+ ************* KOVAAK'S SECTION **************
+ *********************************************/
+
 export async function getKvksData() {
     let kvksScores = [];
 
     let cookiefiedSteamID = getCookie('steamid64');
     //console.log("steamid from cookies: " + cookiefiedSteamID);
-        if(!isNullOrEmpty(cookiefiedSteamID)) {
-          if(s4HardKvks != null) {
-            for(let i=0;i<s4HardKvks.length;i++) {
-              let kvksScore = await kvksAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
-              if(kvksScore != null) kvksScores.push(kvksScore);
+    if (!isNullOrEmpty(cookiefiedSteamID)) {
+        if (s4HardKvks != null) {
+            for (let i = 0; i < s4HardKvks.length; i++) {
+                let kvksScore = await kvksAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
+                if (kvksScore != null) kvksScores.push(kvksScore);
             }
 
-            if(kvksScores.length > 0) {
-              const results = KVKScalculateBenchmark(kvksScores, "hard", "s4");
-              //console.log(results);
-              return results;
+            if (kvksScores.length > 0) {
+                const results = KVKScalculateBenchmark(kvksScores, "hard", "s4");
+                //console.log(results);
+                return results;
             }
-          }
         }
-        //else console.log("no steamid in cookies!");
+    }
+    //else console.log("no steamid in cookies!");
 }
 
 export async function kvksAPIcall(steamID64, leaderboardID, scenarioName) {
@@ -658,7 +684,7 @@ export async function kvksAPIcall(steamID64, leaderboardID, scenarioName) {
         }
     });
 
-    if(response != null) {
+    if (response != null) {
         //console.log(response);
         const results = {
             scenario: scenarioName,
@@ -677,11 +703,11 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
     let benchmarkRanks = [];
     let benchmarkScenarios = [];
 
-    switch(season) {
+    switch (season) {
         case "s4":
-            switch(tier) {
+            switch (tier) {
                 case "hard":
-                    scenarioRanks = hardSubRanks;
+                    scenarioRanks = hardSubRanksMap;
                     scenarioPointRewards = hardSubPoints;
                     benchmarkRanks = hardRanks;
                     benchmarkScenarios = s4HardKvks;
@@ -696,34 +722,40 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
     let aggregateSubCategoryPoints = [];
     let scenPointsList = [];
 
-    if(scenarioPointRewards != null &&  benchmarkRanks != null && benchmarkScenarios != null) {
+    if (scenarioPointRewards != null && benchmarkRanks != null && benchmarkScenarios != null) {
         //calculate scen points   
         const plainArray = [...scenarioData];
-        for(let i=0;i<plainArray.length;i++) {
+        for (let i = 0; i < plainArray.length; i++) {
             let plainData = { ...plainArray[i] };
 
+            let matchingScen = null;
+            let scen = String(plainData.scenario).toLowerCase().trim();
 
-            if(plainData.scenario == "S4 Threeshot Hard") {
-                console.log("'" + plainData.scenario + "'" + " doesn't equal '" + benchmarkScenarios[0].name + "'");
+            for (let i = 0; i < benchmarkScenarios.length; i++) {
+                let taskDef = String(benchmarkScenarios[i].name).toLocaleLowerCase().trim();
+                if (taskDef === scen) {
+                    matchingScen = benchmarkScenarios[i];
+                    break;
+                }
             }
 
+            let finalPts = 0;
+            let prog = 0;
+            let baseRankIndex = -1;
 
-            let matchingScen = benchmarkScenarios.find(s => s.name === plainData.scenario);
-            if(matchingScen != null && plainData.score >= matchingScen.scores[0]) {
-                let baseRankIndex = -1;
+            if (matchingScen != null) {          
                 for (let i = 0; i < matchingScen.scores.length; i++)
-                    if (matchingScen.scores[i] <= plainData.score) 
+                    if (matchingScen.scores[i] <= plainData.score)
                         baseRankIndex = i;
 
-                if(baseRankIndex >= 0) {
-                    let basePoints = getEntryAtIndex(hardSubRanks, baseRankIndex)[0];
+                if (baseRankIndex >= 0) {
+                    let basePoints = getEntryAtIndex(scenarioRanks, baseRankIndex)[0];
                     //calculate partial points till next rank
                     let partialPoints = 0;
-                    let prog = 0;
-
-                    let nextRankIndex = baseRankIndex+1;
-                    if(nextRankIndex < hardSubRanks.size) {
-                        let pointsDiff = getEntryAtIndex(hardSubRanks, nextRankIndex)[0] - basePoints;
+                    
+                    let nextRankIndex = baseRankIndex + 1;
+                    if (nextRankIndex < scenarioRanks.size) {
+                        let pointsDiff = getEntryAtIndex(scenarioRanks, nextRankIndex)[0] - basePoints;
                         let scoreDiff = matchingScen.scores[nextRankIndex] - matchingScen.scores[baseRankIndex];
                         let pointsPerScore = pointsDiff / scoreDiff;
                         let scoreOver = plainData.score - matchingScen.scores[baseRankIndex];
@@ -731,29 +763,32 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
                         prog = Math.floor((scoreOver / scoreDiff) * 100);
                     }
                     else { //already max rank, take previous dist * 2/3
-                        let pointsDiff = getEntryAtIndex(hardSubRanks, baseRankIndex)[0] - getEntryAtIndex(hardSubRanks, baseRankIndex-1)[0];
-                        let scoreDiff = matchingScen.scores[baseRankIndex] - matchingScen.scores[baseRankIndex-1];
+                        let pointsDiff = getEntryAtIndex(scenarioRanks, baseRankIndex)[0] - getEntryAtIndex(scenarioRanks, baseRankIndex - 1)[0];
+                        let scoreDiff = matchingScen.scores[baseRankIndex] - matchingScen.scores[baseRankIndex - 1];
                         let scoreOver = plainData.score - matchingScen.scores[baseRankIndex];
                         partialPoints = ((scoreOver * (pointsDiff / scoreDiff)) / 3) * 2;
                         prog = 100;
                     }
 
-                    let finalPts = parseFloat(basePoints) + parseFloat(partialPoints);
-                    calculatedScens.push({
-                        name: matchingScen.name,
-                        category: matchingScen.category,
-                        maxScore: plainData.score,
-                        points: finalPts,
-                        progress: prog,
-                        rank: getEntryAtIndex(hardSubRanks, baseRankIndex)[1],
-                        scores: matchingScen.scores,
-                        rankList: hardSubRanks,
-                        detailsOpen: false,
-                    });
-                    scenPointsList.push(finalPts);
+                    finalPts = parseFloat(basePoints) + parseFloat(partialPoints);                  
                 }
             }
-            //else console.log("no matching scen found for " + plainData.scenario);
+            else console.log("no matching scen found for '" + plainData.scenario + "'");
+
+            if(finalPts == undefined || finalPts == null) finalPts = 0;
+
+            calculatedScens.push({
+                name: matchingScen.name,
+                category: matchingScen.category,
+                maxScore: plainData.score,
+                points: finalPts,
+                progress: prog,
+                rank: baseRankIndex > -1 ? getEntryAtIndex(scenarioRanks, baseRankIndex)[1] : "Unranked",
+                scores: matchingScen.scores,
+                rankList: scenarioRanks,
+                detailsOpen: false,
+            });
+            scenPointsList.push(finalPts);
         }
 
         //select counted scens
@@ -768,40 +803,39 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
         let subCategoryPointsList = [countedClicking, countedTracking, countedSwitching];
 
         for (let i = 0; i < subCategoryPointsList.length; i++) {
-            if(subCategoryPointsList[i] != null && subCategoryPointsList.length > 0) {
+            if (subCategoryPointsList[i] != null && subCategoryPointsList.length > 0) {
                 let subCatTotal = 0;
 
-                for(let j=0;j<subCategoryPointsList[i].length;j++) {
+                for (let j = 0; j < subCategoryPointsList[i].length; j++) {
                     let scenPts = parseFloat(subCategoryPointsList[i][j].points);
                     subCatTotal += scenPts
-                    totalPoints += scenPts;             
+                    totalPoints += scenPts;
                 }
 
                 aggregateSubCategoryPoints.push(subCatTotal);
-            }       
+            }
         }
-        totalPoints = Math.floor(totalPoints);
 
         //calculate final rank
         let keyValuePairs = Object.entries(hardRanks);
         let firstKey = keyValuePairs[0] ? parseInt(keyValuePairs[0][0]) : null;
         let isAtLeastAsLarge = firstKey ? totalPoints >= firstKey : false;
-        if(isAtLeastAsLarge) {     
+        if (isAtLeastAsLarge) {
             let filteredPairs = keyValuePairs.filter(([key, value]) => parseInt(key) < totalPoints);
             let lastPair = filteredPairs[filteredPairs.length - 1];
             let lastStringProperty = lastPair ? lastPair[1] : null;
-    
+
             //console.log("Achieved Benchmark Rank: " + lastStringProperty + ", with " + totalPoints + " points!");
             finalRank = lastStringProperty ?? "Unranked";
         }
         else {
             //console.log("user is unranked with points: " + totalPoints + " (min rank: " + firstKey + ")");
-        }      
+        }
     }
 
     return {
         overallPoints: totalPoints,
-        overallRank: finalRank,   
+        overallRank: finalRank,
         allPoints: scenPointsList,
         subCategoryPoints: aggregateSubCategoryPoints,
         benchmarks: calculatedScens,
@@ -812,14 +846,14 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
 const getEntryAtIndex = (map, index) => {
     let currentIndex = 0;
     for (const entry of map.entries()) {
-      if (currentIndex === index) {
-        return entry;
-      }
-      currentIndex++;
+        if (currentIndex === index) {
+            return entry;
+        }
+        currentIndex++;
     }
     return null; // Return null if index is out of range
-  };
-  
+};
+
 export function setCookie(name, value) {
     document.cookie = name + "=" + value + "; path=/";
 }
