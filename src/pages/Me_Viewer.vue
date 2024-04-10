@@ -1,10 +1,9 @@
 <template>
-  <div class="px-[8%] relative">
+   <div class="px-[8%] relative">
     <section class="py-8 flex items-start justify-between">
       <base-card
         v-if="isLoading"
-        class="grid place-items-center max-w-md py-5 px-10"
-      >
+        class="grid place-items-center max-w-md py-5 px-10">
         <loading-spinner></loading-spinner>
       </base-card>
       <base-card
@@ -17,17 +16,15 @@
           flex flex-1
           gap-10
           max-w-xl
-        "
-      >
-        <div class="flex flex-col gap-4 w-[40%]">
+        ">
+       <div class="flex flex-col gap-4 w-[40%]">
           <span class="block text-2xl font-semibold">{{
-            currentPlayerInfo.username
+            playerInfo.username
           }}</span>
           <span class="block"
-            >{{ currentPlayerInfo.rank }} -
-            {{ Math.floor(currentPlayerInfo.skill) }}</span
+            >{{ playerInfo.rank }} -
+            {{ Math.floor(playerInfo.skill) }}</span
           >
-
           <progress-bar
             class="w-40 h-5 bg-red-200 rounded-sm"
             :value="playerSkill"
@@ -47,21 +44,7 @@
         </div>
       </base-card>
       <div style="display:flex;flex-direction: column;" >
-        <button
-        class="
-          right-0
-          border-2 border-slate-500
-          px-6
-          py-2
-          rounded
-          transition
-          hover:bg-slate-500
-        "
-        @click="handleSwitchProfile"
-      >
-        Switch Profile
-      </button>
-      <!--<button
+      <button
         class="
           right-0
           border-2 border-slate-500
@@ -74,12 +57,10 @@
         @click="openPopup()">
         Set Profile
       </button>
-      <Popup v-if="showPopup"/>-->
-      </div>
-      
+      <Popup v-if="showPopup" @submit="handleSubmission"/>
+      </div>   
     </section>
-
-    <div class="relative z-10" id="profile-nav" >
+  <div class="relative z-10" id="profile-nav" >
       <ul class="flex">
         <li v-for="(tab, key) in tabs" :key="tab" >
           <router-link
@@ -113,25 +94,23 @@ import { mapGetters } from "vuex";
 import * as queries from "../helpers/queries.js";
 import * as functions from "../helpers/functions.js";
 import * as revosectData from "../helpers/revosectData.js";
-//import Popup from './ProfileDataPopup.vue';
+import Popup from './ProfileDataPopup.vue';
 export default {
-  props: {
-    username: String,
-  },
-  /*components: {
+  components: {
     Popup
-  },*/
+  },
   data() {
     return {
       playerInfo: {},
       isLoading: false,
       tabs: {
-        Overview: "profile-overview",
-        Benchmarks: "ra-benches",
-        Benchmarks_S2: "ra-benches-s2",
+        Overview: "me-overview",
+        "rA S4": "me-ra-benches",
+        "rA S2": "me-ra-benches-s2",
+        "rA S4 Kvks": "me-ra-benches-s4kvks",
       },
-      //kvksScores: [],
-      //showPopup: false
+      kvksScores: [],
+      showPopup: false,
     };
   },
   computed: {
@@ -143,7 +122,6 @@ export default {
       "RAMediumS2",
       "RAEasyS2",
       "currentPlayerTasks",
-      "currentPlayerInfo",
     ]),
     overallRankRA() {
       return this.RAHard.overallRank != "Unranked"
@@ -160,9 +138,9 @@ export default {
         : this.RAEasyS2.overallRank;
     },
     playerSkill() {
-      if (this.currentPlayerInfo.skill) {
-        if (this.currentPlayerInfo.skill == 1000) return 100;
-        return this.currentPlayerInfo.skill % 100;
+      if (this.playerInfo.skill) {
+        if (this.playerInfo.skill == 1000) return 100;
+        return this.playerInfo.skill % 100;
       } else {
         return 0;
       }
@@ -183,30 +161,24 @@ export default {
   },
   methods: {
     imagePath(rank) {
-      return rank.replace(/ /g, "").toLowerCase();
+      if(!functions.isNullOrEmpty(rank)) return rank.replace(/ /g, "").toLowerCase(); 
     },
-    handleSwitchProfile() {
-      sessionStorage.removeItem("currentPlayer");
-      this.$router.push("/users");
-    },
-    displayRoute() {
-      // console.log(this.$route);
-    },
-    /*openPopup() {
+    openPopup() {
       if(this.showPopup) this.showPopup = false;
       else this.showPopup = true;
-    },*/
-  },
-  //Fetching the Player ID and Username again
-  // Assigning the fetched data to our component
-  // Fetching player Task History using ID from the previous request
-
-  async mounted() {
-    if (this.username == this.$store.getters.currentPlayerInfo.username) return;
-
-    this.playerInfo = {};
+    },
+    handleSubmission() {
+      //console.log('Submit button clicked!');
+      this.yourFunction();
+    },
+    async yourFunction() {
+      let cookiefiedAimlabsName = functions.getCookie('aimlabsusername');
+    //console.log("aimlabsusername from cookies: " + cookiefiedAimlabsName);
+    if(!functions.isNullOrEmpty(cookiefiedAimlabsName)) {
+      this.playerInfo = {};
     this.isLoading = true;
-    let aimlabProfile = await queries.APIFetch(queries.GET_USER_INFO, { username: this.username, });
+    let aimlabProfile = await queries.APIFetch(queries.GET_USER_INFO, { username: cookiefiedAimlabsName, });
+    //console.log(aimlabProfile);
     if (aimlabProfile != null) {
       this.playerInfo = {
         username: aimlabProfile.aimlabProfile.username,
@@ -230,32 +202,22 @@ export default {
       if (!plays_agg?.aimlab) {
         this.$router.go();
       }
-      sessionStorage.setItem("currentPlayer", this.playerInfo.username);
+
       this.$store.dispatch("updateCurrentPlayerInfo", this.playerInfo);
       this.$store.dispatch(
         "updateCurrentPlayerTasks",
         plays_agg.aimlab.plays_agg
       );
-
-      /*let cookiefiedSteamID = functions.getCookie('steamid64');
-      console.log("steamid from cookies: " + cookiefiedSteamID);
-      if(!functions.isNullOrEmpty(cookiefiedSteamID)) {
-        let kvksS4 = revosectData.s4HardKvks;
-        if(kvksS4 != null) {
-          for(let i=0;i<kvksS4.length;i++) {
-            let kvksScore = await functions.kvksAPIcall(cookiefiedSteamID, kvksS4[i].leaderboardID, kvksS4[i].name);
-            if(kvksScore != null) this.kvksScores.push(kvksScore);
-          }
-
-          if(this.kvksScores.length > 0) {
-            const results = functions.KVKScalculateBenchmark(this.kvksScores, "hard", "s4");
-          }
-        }
-      }*/
-
       this.$store.dispatch("setRABenches");
       this.$store.dispatch("setRABenchesS2");
+      }
     }
+    //else console.log("no aimlabs username in cookies!");     
+    }
+  },
+  async mounted() {
+    //this.showPopup = true;
+    this.yourFunction();
   },
 };
 </script>

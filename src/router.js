@@ -8,10 +8,12 @@ import PlayerProfile from "./pages/PlayerProfile.vue";
 import PlayerTasksOverview from "./pages/PlayerTasksOverview.vue";
 import RevosectBenchmarksPage from "./pages/RevosectBenchmarksPage.vue";
 import RevosectBenchmarksPageS2 from "./pages/RevosectBenchmarksPageS2.vue";
+import RevosectBenchmarksPageKvks from "./pages/RevosectBenchmarksPageKvks.vue";
 import LeaderboardsPage from "./pages/LeaderboardsPage.vue";
 import RevosectLeaderboardsPage from "./pages/RevosectLeaderboardsPage.vue";
 import TaskView from "./pages/TaskView.vue";
 import AboutPage from "./pages/AboutPage.vue";
+import Me_Viewer from "./pages/Me_Viewer.vue";
 // import TaskLeaderboard from "./pages/TaskLeaderboard.vue";
 
 const router = createRouter({
@@ -20,7 +22,7 @@ const router = createRouter({
     { path: "/", redirect: "/home" },
     { path: "/home", component: HomePage },
     {
-      path: "/profile",
+      path: "/users",
       component: ProfileSearch,
       beforeEnter: (_, from) => {
         if (from.name == "profile-overview") {
@@ -28,12 +30,12 @@ const router = createRouter({
           return;
         }
         if (sessionStorage.getItem("currentPlayer")) {
-          router.push("/profile/" + sessionStorage.getItem("currentPlayer"));
+          router.push("/users/" + sessionStorage.getItem("currentPlayer"));
         }
       },
     },
     {
-      path: "/profile/:username",
+      path: "/users/:username",
       component: PlayerProfile,
       props: true,
       children: [
@@ -96,6 +98,38 @@ const router = createRouter({
     },
     { path: "/about", component: AboutPage },
     { path: "/:notFound(.*)", component: null },
+
+    {
+      path: "/me",
+      component: Me_Viewer,
+      props: true,
+      children: [
+        {
+          path: "",
+          redirect: { name: "me-overview" },
+        },
+        {
+          name: "me-overview",
+          path: "overview",
+          component: PlayerTasksOverview,
+        },
+        {
+          name: "me-ra-benches",
+          path: "revosect",
+          component: RevosectBenchmarksPage,
+        },
+        {
+          name: "me-ra-benches-s2",
+          path: "revosect",
+          component: RevosectBenchmarksPageS2,
+        },
+        {
+          name: "me-ra-benches-s4kvks",
+          path: "revosect",
+          component: RevosectBenchmarksPageKvks,
+        }
+      ],
+    }
   ],
 });
 

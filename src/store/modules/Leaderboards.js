@@ -68,7 +68,7 @@ export default {
     },
   },
   actions: {
-    async fetchLeaderboard(context, payload) {
+    async fetchLeaderboard(context, payload, season) {
       let ldb = null;
       let fullBench = null;
       switch (payload) {
@@ -88,7 +88,9 @@ export default {
         worker.onmessage = (event) => {
           playerList[event.data[1]] = event.data[0];
           if (Object.entries(playerList).length == fullBench.length) {
-            ldb = organizeLeaderboard(playerList, fullBench, payload);
+
+
+            ldb = organizeLeaderboard(playerList, fullBench, payload, season);
             switch (payload) {
               case "hard":
                 context.commit("setHardLdb", ldb);

@@ -1,6 +1,6 @@
 import {
   calculateRevosectBenchmarks,
-  KVKScalculateBenchmark,
+  getKvksData,
 } from "../../helpers/functions";
 import _ from "lodash";
 
@@ -49,6 +49,14 @@ export default {
         benchmarks: [],
         detailsOpen: false,
       },
+      kvksBenchHard: {
+        overallPoints: 0,
+        overallRank: "Unranked",
+        allPoints: [],
+        subCategoryPoints: [],
+        benchmarks: [],
+        detailsOpen: false,
+      },
     };
   },
   getters: {
@@ -70,6 +78,9 @@ export default {
     RAEasyS2(state) {
       return state.RAEasyS2;
     },
+    RAKvksHard(state) {
+      return state.kvksBenchHard;
+    }
   },
   mutations: {
     setRAHard(state, payload) {
@@ -90,6 +101,9 @@ export default {
     setRAEasyS2(state, payload) {
       state.RAEasyS2 = payload;
     },
+    setRAKVksHard(state, payload) {
+      state.kvksBenchHard = payload;
+    }
   },
   actions: {
     setRABenchesS2(context) {
@@ -121,7 +135,7 @@ export default {
       context.commit("setRAMediumS2", RAMediumS2);
       context.commit("setRAHardS2", RAHardS2);
     },
-    setRABenches(context) {
+    async setRABenches(context) {
       let RAHard = calculateRevosectBenchmarks(
         {
           tasks: context.rootGetters.currentPlayerTasks,
@@ -147,15 +161,12 @@ export default {
         "s4",
       );
 
-      /*let RAHardkvks = KVKScalculateBenchmark(
-        context.rootGetters.kvksScores,
-        "hard",
-        "s4kvks",
-      );*/
+      let kvksHard = await getKvksData();
 
       context.commit("setRAEasy", RAEasy);
       context.commit("setRAMedium", RAMedium);
       context.commit("setRAHard", RAHard);
+      context.commit("setRAKVksHard", kvksHard);
     },
   },
 };

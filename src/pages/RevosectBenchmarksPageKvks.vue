@@ -1,13 +1,17 @@
 <template>
     <div class="min-h-max" style="background-color: #111;"><!-- 27272A -->
+        <!-- <div 
+      v-if="!RABenchmarks.overallPoints"
+      class="grid place-items-center p-10"
+    >
+      <loading-spinner></loading-spinner>
+    </div> -->
         <div>
             <div
                 class="mt-4 flex max-h-96 w-full justify-center gap-4 font-oswald"
             >
-                <dropdown
-                    class="ml-4 mr-auto self-start"
-                    :selected-tab="currentTab"
-                >
+                <div class="ml-4 mr-auto self-start" style="display: flex; flex-direction: row;">
+                    <dropdown class="ml-4 mr-auto self-start" :selected-tab="currentTab">
                     <li
                         class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
                         v-for="(element, index) in dropdownElements"
@@ -17,6 +21,18 @@
                         {{ element }}
                     </li>
                 </dropdown>
+                <!--<dropdown class="ml-4 mr-auto self-start" :selected-tab="currentGame">
+                    <li
+                        class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
+                        v-for="(element, index) in gameDropdownElements"
+                        :key="index"
+                        @click="handleGameDropdownSelect(index)"
+                    >
+                        {{ element }}
+                    </li>
+                </dropdown>-->
+                </div>
+                
                 <div class="my-2 mr-auto flex gap-20">
                     <!--  -->
                     <div class="mr-auto flex gap-20">
@@ -71,6 +87,7 @@
                 <!-- <span class="font-bold">{{ item.energy }}</span> ({{ item.rank }}) -->
             </div>
 
+
             <!-- --------------------------------------------------------------------- -->
             <!-- ------------------------ SCENARIO RESULTS --------------------------- -->
             <!-- --------------------------------------------------------------------- -->
@@ -105,11 +122,9 @@
                     <div
                         class="relative col-span-3 flex items-center justify-between"
                     >
-                        <span
-                            class="absolute left-1/2 z-10 -translate-x-1/2 transform text-right"
+                        <span class="absolute left-1/2 z-10 -translate-x-1/2 transform text-right"
                             v-if="bench.points"
-                            >{{ bench.points }}</span
-                        >
+                            >{{ bench.points.toFixed(3) }}</span> <!--Math.floor() for no decimals -->
                         <progress-bar
                             class="h-5 w-full rounded-sm bg-slate-600"
                             :value="bench.progress"
@@ -158,7 +173,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex gap-10 pl-4">
+                        <div class="flex gap-10 pl-4" style="display: none;">
                             <div class="flex flex-col gap-2">
                                 <div class="grid grid-cols-2">
                                     <p v-if="bench.count">
@@ -216,33 +231,57 @@
                         </div>
                     </div>
                 </div>
+                <!-- Categories sidebar -->
+                <!-- <div
+          class="text-center origin-top-left absolute rotate-90"
+          id="category-bar"
+          v-if="RABenchmarks.overallPoints"
+        >
+          <div class="grid grid-cols-6 gap-1" id="category-item">
+            <span
+              class="bg-slate-700"
+              v-for="item in subCategories"
+              :key="item"
+              >{{ item }}</span
+            >
+          </div>
+          <div class="grid grid-cols-6 gap-0.5 min-w-full">
+            <span
+              id="subcategory-item"
+              class="col-span-2 bg-slate-800"
+              v-for="category in categories"
+              :key="category"
+              >{{ category }}</span
+            >
+          </div>
+        </div> -->
             </section>
         </div>
     </div>
     <!-- text-mythic bg-mythic grid-cols-5 grid-cols-4 -->
 </template>
 <script>
-import * as ra from "../helpers/revosectDataS2.js";
+import axios from 'axios';
+import * as ra from "../helpers/revosectData.js";
+import { isNullOrEmpty } from '../helpers/functions.js';
 import {
     findReplay,
     findWorkshopId,
     taskDeepLink,
 } from "@/helpers/functions.js";
+import { functions } from 'lodash';
 export default {
     data() {      
         return {
             replayLoading: false,
-            currentTabIndex: 2,
+            currentTabIndex: 0, //2,
             categories: ["Clicking", "Tracking", "Switching"],
             subCategories: [
-                "Static",
-                "Dynamic",
-                "Precise",
-                "Reactive",
-                "FlickTS",
-                "TrackTS",
+                "Clicking",
+                "Tracking",
+                "Switching",
             ],
-            dropdownElements: ["Easy", "Medium", "Hard"],
+            dropdownElements: ["Hard"], //"Easy", "Medium", 
         };
     },
     computed: {
@@ -257,42 +296,24 @@ export default {
         },
         rankList() {
             switch (this.currentTab.value) {
-                case "hard":
-                    return [
-                        "Mythic",
-                        "Immortal",
-                        "Archon",
-                        "Ethereal",
-                        "Divine",
-                    ];
-
-                case "medium":
-                    return ["Ace", "Legend", "Sentinel", "Valour"];
-
-                case "easy":
-                    return ["Bronze", "Silver", "Gold", "Platinum"];
+                case "hard": return [ "Immortal", "Archon", "Ethereal", "Divine", "Omnipotent" ];
+                /*case "medium": return ["Ace", "Legend", "Sentinel", "Valour", "Mythic"];
+                case "easy": return ["Bronze", "Silver", "Gold", "Platinum"]; */              
             }
         },
         pointList() {
             switch (this.currentTab.value) {
-                case "hard":
-                    return ra.hardSubPointsS2;
-                case "medium":
-                    return ra.mediumPointsS2;
-                case "easy":
-                    return ra.easySubPointsS2;
+                case "hard": return ra.hardSubPoints;            
+                /*case "medium": return ra.mediumPoints;  
+                case "easy": return ra.easySubPoints;*/
             }
         },
         RABenchmarks() {
             switch (this.currentTab.value) {
-                case "hard":
-                    return this.$store.getters.RAHardS2;
-                case "medium":
-                    return this.$store.getters.RAMediumS2;
-                case "easy":
-                    return this.$store.getters.RAEasyS2;
-                default:
-                    return this.$store.getters.RAHardS2;
+                case "hard": return this.$store.getters.RAKvksHard;
+                /*case "medium": return this.$store.getters.RAMedium;
+                case "easy": return this.$store.getters.RAEasy;*/
+                default: return this.$store.getters.RAKvksHard;
             }
         },
         scoreReqGrid() {
@@ -315,17 +336,21 @@ export default {
         subCategoryPoints() {
             let fixed = [];
             for(let i=0;i<this.RABenchmarks.subCategoryPoints.length;i++) {
-                fixed.push(this.RABenchmarks.subCategoryPoints[i].toFixed(2));
+                //fixed.push(this.RABenchmarks.subCategoryPoints[i].toFixed(3));
+                fixed.push(Math.floor(this.RABenchmarks.subCategoryPoints[i]));
             }
-            return this.RABenchmarks.subCategoryPoints;
+            return fixed;
         },
     },
     methods: {
         getImagePath(rank) {
-            return `../../rank-img/ra/s2/${rank.toLowerCase()}.png`;
+            if(rank != null && !isNullOrEmpty(rank)) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
         },
         handleDropdownSelect(index) {
             this.currentTabIndex = index;
+        },
+        handleGameDropdownSelect(index) {
+            this.currentGameIndex = index;
         },
         toggleBenchDetails(bench) {
             bench.detailsOpen = !bench.detailsOpen;
@@ -348,6 +373,7 @@ export default {
             }
             this.replayLoading = false;
         },
+       
     },
 };
 </script>

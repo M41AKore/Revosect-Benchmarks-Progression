@@ -16,6 +16,7 @@ import {
     mediumBench,
     easyBench,
     categories,
+    s4HardKvks,
 } from "./revosectData";
 import {
     hardSubPointsS2,
@@ -142,6 +143,8 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             else if(season == "s2") benchData = easyBenchS2;
     }
 
+    if(benchData == null) return;
+
     //Filtering out the benchmark scenarios the player has played from the provided full list of played scenarios
     let playedBenchmarks = playerData.tasks.filter((n) =>
         benchData.some((n2) => n.id == n2.id)
@@ -159,6 +162,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
 
     playerBenchmarks.sort((a, b) => a.scenarioID - b.scenarioID);
     const allPointsList = playerBenchmarks.map((bench) => bench.points);
+
     //Grouping benchmark scenarios by subcategories
     const subCategoryGroupedBenchmarks = _.groupBy(
         playerBenchmarks,
@@ -177,7 +181,6 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             return item.reduce((acc, curr) => acc + curr);
         });
     } else {
-
         if(season == "s2") {
             let filtered = [];
             for(let i=0;i<subCategoryPointsList.length;i++) {
@@ -185,12 +188,8 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
                 filtered.push(top2);
             }
             subCategoryPointsList = filtered;
-            //console.log(filtered);
         }
         else if(season == "s4" && mode != "easy") {
-            //console.log(subCategoryPointsList.length);
-            //console.log(subCategoryPointsList);
-            
             let clicking = subCategoryPointsList[0].concat(subCategoryPointsList[1]);
             let tracking = subCategoryPointsList[2].concat(subCategoryPointsList[3]).concat(subCategoryPointsList[4]);
             let switching = subCategoryPointsList[5].concat(subCategoryPointsList[6]).concat(subCategoryPointsList[7]);
@@ -198,28 +197,21 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             clicking = clicking.sort((a, b) => b - a).slice(0, 4);
             tracking = tracking.sort((a, b) => b - a).slice(0, 4);
             switching = switching.sort((a, b) => b - a).slice(0, 4);
-
-            subCategoryPointsList = [clicking, tracking, switching];      
-            
-            //console.log(clicking);
-        }
-
-        //console.log("aggregateCategoryPoints: " + aggregateSubCategoryPoints);
+            subCategoryPointsList = [clicking, tracking, switching];              
+        }     
     }
 
     aggregateSubCategoryPoints = subCategoryPointsList.map((category) => {
         return category.reduce((total, num) => total + num, 0);
     });
 
-    //calculating overall points
     let overallPoints = aggregateSubCategoryPoints.reduce(
         (acc, curr) => acc + curr
     );
-
     overallPoints = Math.floor(overallPoints);
 
     //Check if player is valour/platinum to add excess points to the total
-    if (mode != "hard") {
+    /*if (mode != "hard") {
         let pointNormalizedData = checkExcessPoints(
             playerBenchmarks,
             subCategoryPointsList,
@@ -230,9 +222,10 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
 
         playerBenchmarks = pointNormalizedData.playerBench;
         overallPoints = pointNormalizedData.overallPoints;
-        aggregateSubCategoryPoints =
-            pointNormalizedData.aggregateSubCategoryPoints;
-    }
+        if(mode == "medium" && season == "s2") console.log("overallPoints: " + overallPoints);
+        aggregateSubCategoryPoints = pointNormalizedData.aggregateSubCategoryPoints;
+    }*/
+
     //finding the player's overall rank
     let benchmarkPointsList = null;
     let benchmarkRankList = null;
@@ -257,8 +250,6 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
                 benchmarkPointsList = mediumPointsS2;
                 benchmarkRankList = mediumRanksS2;
             }      
-            benchmarkPointsList = mediumPoints;
-            benchmarkRankList = mediumRanks;
             break;
         case "easy":
             if(season == "s4") {
@@ -271,6 +262,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             }      
             break;
     }
+
     benchmarkPointsList.forEach((point) => {
         if (overallPoints > point) {
             basePoints = point;
@@ -477,7 +469,7 @@ function checkExcessPoints(
     return { playerBench, overallPoints, aggregateSubCategoryPoints };
 }
 
-export function organizeLeaderboard(playerList, fullBench, mode) {
+export function organizeLeaderboard(playerList, fullBench, mode, season) {
     for (let task of fullBench) {
         let index = playerList[task.id].length;
         for (let i = 0; i < playerList[task.id].length; i++) {
@@ -524,7 +516,8 @@ export function organizeLeaderboard(playerList, fullBench, mode) {
                 username: player.username,
                 ...calculateRevosectBenchmarks(
                     { tasks: player.scores, id: player.id },
-                    mode
+                    mode,
+                    season,
                 ),
             });
         });
@@ -623,71 +616,210 @@ export function organizeLeaderboard(playerList, fullBench, mode) {
 // });
 
 
+
+export async function getKvksData() {
+    let kvksScores = [];
+
+    let cookiefiedSteamID = getCookie('steamid64');
+    //console.log("steamid from cookies: " + cookiefiedSteamID);
+        if(!isNullOrEmpty(cookiefiedSteamID)) {
+          if(s4HardKvks != null) {
+            for(let i=0;i<s4HardKvks.length;i++) {
+              let kvksScore = await kvksAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
+              if(kvksScore != null) kvksScores.push(kvksScore);
+            }
+
+            if(kvksScores.length > 0) {
+              const results = KVKScalculateBenchmark(kvksScores, "hard", "s4");
+              //console.log(results);
+              return results;
+            }
+          }
+        }
+        //else console.log("no steamid in cookies!");
+}
+
 export async function kvksAPIcall(steamID64, leaderboardID, scenarioName) {
     //leaderboardID = '666';
     //steamID64 = '76561197983102874';
-
-const postData = {
-    leaderboard_id: leaderboardID,
-    steam_id: steamID64,
-    steam_ids: [steamID64]
-};
-
-const apiUrl = 'https://kovaaks.com/sa_leaderboard_scores_steam_ids_get';
-
-const response = await axios.post(apiUrl, postData, {
-    headers: {
-        'Accept': '*/*',
-        'User-Agent': 'X-UnrealEngine-Agent',
-        'Authorization': 'Bearer 140000007407386b2c618e1e3eb4425b01001001a9a90b66180000000100000002000000f15b782a2e4453214f67070001000000b200000032000000040000003eb4425b01001001ce930c00c30e5fae0138a8c000000000aba90b662b5927660100b62e080000000000c9f0e8dc401c8594ca19563a6a6989c4d0d865d8538663ff4329600d3bcbc221ef3223dd25966fb3ccb71fd2a3ee94a8331ed3373c77b3fe4eab5aca10f564e4f9b9fa9e2808581ec851b9966dc30f204f6a43865979ab316c097e27109dcd87b15d72acf74e61511abbb8973c414dba51331987af9815d626367076bfd5f574',
-        'GSTVersion': '3.4.2.2024-02-28-14-22-08-791139f13a',
-        'Content-Type': 'application/json'
-    }
-});
-
-if(response != null) {
-    //console.log(response);
-    const results = {
-        scenario: scenarioName,
-        id: leaderboardID,
-        score: response.data[0] == null ? 0 : (response.data[0].score / 100).toFixed(2),
-        rank: response.data[0] == null ? "unranked" : response.data[0].rank,
+    const postData = {
+        leaderboard_id: leaderboardID,
+        steam_id: steamID64,
+        steam_ids: [steamID64]
     };
-    //console.log(results);
-    return results;
+    const apiUrl = 'https://kovaaks.com/sa_leaderboard_scores_steam_ids_get';
+    const response = await axios.post(apiUrl, postData, {
+        headers: {
+            'Accept': '*/*',
+            'User-Agent': 'X-UnrealEngine-Agent',
+            'Authorization': 'Bearer 140000007407386b2c618e1e3eb4425b01001001a9a90b66180000000100000002000000f15b782a2e4453214f67070001000000b200000032000000040000003eb4425b01001001ce930c00c30e5fae0138a8c000000000aba90b662b5927660100b62e080000000000c9f0e8dc401c8594ca19563a6a6989c4d0d865d8538663ff4329600d3bcbc221ef3223dd25966fb3ccb71fd2a3ee94a8331ed3373c77b3fe4eab5aca10f564e4f9b9fa9e2808581ec851b9966dc30f204f6a43865979ab316c097e27109dcd87b15d72acf74e61511abbb8973c414dba51331987af9815d626367076bfd5f574',
+            'GSTVersion': '3.4.2.2024-02-28-14-22-08-791139f13a',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if(response != null) {
+        //console.log(response);
+        const results = {
+            scenario: scenarioName,
+            id: leaderboardID,
+            score: response.data[0] == null ? 0 : (response.data[0].score / 100).toFixed(2),
+            placement: response.data[0] == null ? "unranked" : response.data[0].rank,
+        };
+        //console.log(results);
+        return results;
+    }
 }
-
-/*.then(response => {
-    //console.log('Response:', response.data);
-    //return response.data;
-
-    
-}).catch(error => {
-    console.error('Error:', error);
-});*/
-}
-
 
 export function KVKScalculateBenchmark(scenarioData, tier, season) {
-    console.log("kvkscalculation!")
-    const plainArray = [...scenarioData];
+    let scenarioRanks = [];
+    let scenarioPointRewards = [];
+    let benchmarkRanks = [];
+    let benchmarkScenarios = [];
 
-    for(let i=0;i<plainArray.length;i++) {
-        const plainData = { ...plainArray[i] };
-        console.log(plainData);
-        
+    switch(season) {
+        case "s4":
+            switch(tier) {
+                case "hard":
+                    scenarioRanks = hardSubRanks;
+                    scenarioPointRewards = hardSubPoints;
+                    benchmarkRanks = hardRanks;
+                    benchmarkScenarios = s4HardKvks;
+                    break;
+            }
+            break;
     }
 
     let totalPoints = 0;
-    let finalRank = 'unranked';
+    let finalRank = 'Unranked';
+    let calculatedScens = [];
+    let aggregateSubCategoryPoints = [];
+    let scenPointsList = [];
 
+    if(scenarioPointRewards != null &&  benchmarkRanks != null && benchmarkScenarios != null) {
+        //calculate scen points   
+        const plainArray = [...scenarioData];
+        for(let i=0;i<plainArray.length;i++) {
+            let plainData = { ...plainArray[i] };
+
+
+            if(plainData.scenario == "S4 Threeshot Hard") {
+                console.log("'" + plainData.scenario + "'" + " doesn't equal '" + benchmarkScenarios[0].name + "'");
+            }
+
+
+            let matchingScen = benchmarkScenarios.find(s => s.name === plainData.scenario);
+            if(matchingScen != null && plainData.score >= matchingScen.scores[0]) {
+                let baseRankIndex = -1;
+                for (let i = 0; i < matchingScen.scores.length; i++)
+                    if (matchingScen.scores[i] <= plainData.score) 
+                        baseRankIndex = i;
+
+                if(baseRankIndex >= 0) {
+                    let basePoints = getEntryAtIndex(hardSubRanks, baseRankIndex)[0];
+                    //calculate partial points till next rank
+                    let partialPoints = 0;
+                    let prog = 0;
+
+                    let nextRankIndex = baseRankIndex+1;
+                    if(nextRankIndex < hardSubRanks.size) {
+                        let pointsDiff = getEntryAtIndex(hardSubRanks, nextRankIndex)[0] - basePoints;
+                        let scoreDiff = matchingScen.scores[nextRankIndex] - matchingScen.scores[baseRankIndex];
+                        let pointsPerScore = pointsDiff / scoreDiff;
+                        let scoreOver = plainData.score - matchingScen.scores[baseRankIndex];
+                        partialPoints = scoreOver * pointsPerScore;
+                        prog = Math.floor((scoreOver / scoreDiff) * 100);
+                    }
+                    else { //already max rank, take previous dist * 2/3
+                        let pointsDiff = getEntryAtIndex(hardSubRanks, baseRankIndex)[0] - getEntryAtIndex(hardSubRanks, baseRankIndex-1)[0];
+                        let scoreDiff = matchingScen.scores[baseRankIndex] - matchingScen.scores[baseRankIndex-1];
+                        let scoreOver = plainData.score - matchingScen.scores[baseRankIndex];
+                        partialPoints = ((scoreOver * (pointsDiff / scoreDiff)) / 3) * 2;
+                        prog = 100;
+                    }
+
+                    let finalPts = parseFloat(basePoints) + parseFloat(partialPoints);
+                    calculatedScens.push({
+                        name: matchingScen.name,
+                        category: matchingScen.category,
+                        maxScore: plainData.score,
+                        points: finalPts,
+                        progress: prog,
+                        rank: getEntryAtIndex(hardSubRanks, baseRankIndex)[1],
+                        scores: matchingScen.scores,
+                        rankList: hardSubRanks,
+                        detailsOpen: false,
+                    });
+                    scenPointsList.push(finalPts);
+                }
+            }
+            //else console.log("no matching scen found for " + plainData.scenario);
+        }
+
+        //select counted scens
+        let clicking = calculatedScens.filter(s => s.category === "Clicking");
+        let tracking = calculatedScens.filter(s => s.category === "Tracking");
+        let switching = calculatedScens.filter(s => s.category === "Switching");
+        //console.log("clicking: " + clicking.length + ", tracking: " + tracking.length + ", switching: " + switching.length);
+
+        let countedClicking = clicking.sort((a, b) => b.points - a.points).slice(0, 4);
+        let countedTracking = tracking.sort((a, b) => b.points - a.points).slice(0, 4);
+        let countedSwitching = switching.sort((a, b) => b.points - a.points).slice(0, 4);
+        let subCategoryPointsList = [countedClicking, countedTracking, countedSwitching];
+
+        for (let i = 0; i < subCategoryPointsList.length; i++) {
+            if(subCategoryPointsList[i] != null && subCategoryPointsList.length > 0) {
+                let subCatTotal = 0;
+
+                for(let j=0;j<subCategoryPointsList[i].length;j++) {
+                    let scenPts = parseFloat(subCategoryPointsList[i][j].points);
+                    subCatTotal += scenPts
+                    totalPoints += scenPts;             
+                }
+
+                aggregateSubCategoryPoints.push(subCatTotal);
+            }       
+        }
+        totalPoints = Math.floor(totalPoints);
+
+        //calculate final rank
+        let keyValuePairs = Object.entries(hardRanks);
+        let firstKey = keyValuePairs[0] ? parseInt(keyValuePairs[0][0]) : null;
+        let isAtLeastAsLarge = firstKey ? totalPoints >= firstKey : false;
+        if(isAtLeastAsLarge) {     
+            let filteredPairs = keyValuePairs.filter(([key, value]) => parseInt(key) < totalPoints);
+            let lastPair = filteredPairs[filteredPairs.length - 1];
+            let lastStringProperty = lastPair ? lastPair[1] : null;
+    
+            //console.log("Achieved Benchmark Rank: " + lastStringProperty + ", with " + totalPoints + " points!");
+            finalRank = lastStringProperty ?? "Unranked";
+        }
+        else {
+            //console.log("user is unranked with points: " + totalPoints + " (min rank: " + firstKey + ")");
+        }      
+    }
 
     return {
-        totalPoints,
-        finalRank,
+        overallPoints: totalPoints,
+        overallRank: finalRank,   
+        allPoints: scenPointsList,
+        subCategoryPoints: aggregateSubCategoryPoints,
+        benchmarks: calculatedScens,
+        detailsOpen: false,
     };
 }
 
+const getEntryAtIndex = (map, index) => {
+    let currentIndex = 0;
+    for (const entry of map.entries()) {
+      if (currentIndex === index) {
+        return entry;
+      }
+      currentIndex++;
+    }
+    return null; // Return null if index is out of range
+  };
+  
 export function setCookie(name, value) {
     document.cookie = name + "=" + value + "; path=/";
 }

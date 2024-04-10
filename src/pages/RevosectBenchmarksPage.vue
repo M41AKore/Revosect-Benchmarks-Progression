@@ -21,7 +21,7 @@
                         {{ element }}
                     </li>
                 </dropdown>
-                <dropdown class="ml-4 mr-auto self-start" :selected-tab="currentGame">
+                <!--<dropdown class="ml-4 mr-auto self-start" :selected-tab="currentGame">
                     <li
                         class="px-4 py-1 transition hover:bg-slate-600" style="background-color: #27272A;"
                         v-for="(element, index) in gameDropdownElements"
@@ -30,7 +30,7 @@
                     >
                         {{ element }}
                     </li>
-                </dropdown>
+                </dropdown>-->
                 </div>
                 
                 <div class="my-2 mr-auto flex gap-20">
@@ -108,8 +108,7 @@
                     <p class="font-semibold tracking-wide">
                         {{ bench.maxScore }}
                     </p>
-                    <p
-                        class="col-span-3 flex gap-2"
+                    <p class="col-span-3 flex gap-2"
                         :class="colorLookup[bench.rank]"
                     >
                         <img
@@ -119,9 +118,7 @@
                         />
                         {{ bench.rank }}
                     </p>
-                    <div
-                        class="relative col-span-3 flex items-center justify-between"
-                    >
+                    <div class="relative col-span-3 flex items-center justify-between">
                         <span
                             class="absolute left-1/2 z-10 -translate-x-1/2 transform text-right"
                             v-if="bench.points"
@@ -265,6 +262,7 @@
 <script>
 import axios from 'axios';
 import * as ra from "../helpers/revosectData.js";
+import { isNullOrEmpty } from '../helpers/functions.js';
 import {
     findReplay,
     findWorkshopId,
@@ -282,8 +280,8 @@ export default {
                 "Switching",
             ],
             dropdownElements: ["Easy", "Medium", "Hard"],
-            currentGameIndex: 0,
-            gameDropdownElements: ["Aimlabs", "KovaaK's"],
+            //currentGameIndex: 0,
+            //gameDropdownElements: ["Aimlabs", "KovaaK's"],
         };
     },
     computed: {
@@ -296,12 +294,6 @@ export default {
                 label: this.dropdownElements[this.currentTabIndex],
             };
         },
-        currentGame() {
-            return { 
-                value: this.gameDropdownElements[this.currentGameIndex].toLowerCase(),
-                label: this.gameDropdownElements[this.currentGameIndex],
-            }
-        },
         rankList() {
             switch (this.currentTab.value) {
                 case "hard": return [ "Immortal", "Archon", "Ethereal", "Divine", "Omnipotent" ];
@@ -310,34 +302,18 @@ export default {
             }
         },
         pointList() {
-            //console.log(this.currentTabIndex.value);
             switch (this.currentTab.value) {
-                case "hard":
-                    /*console.log(this.currentGameIndex.value);
-                    if(this.currentGameIndex.value == "KovaaK's") {
-                        console.log("get kvks!");
-                    }
-                    else if(this.currentGameIndex.value = "Aimlabs") {
-                        return ra.hardSubPoints;
-                    } */
-                    return ra.hardSubPoints;            
-                case "medium":
-                    return ra.mediumPoints;
-                case "easy":
-                    return ra.easySubPoints;
+                case "hard": return ra.hardSubPoints;             
+                case "medium": return ra.mediumPoints;
+                case "easy": return ra.easySubPoints;    
             }
         },
         RABenchmarks() {
             switch (this.currentTab.value) {
-                case "hard":
-                    //console.log("is hard!");
-                    return this.$store.getters.RAHard;
-                case "medium":
-                    return this.$store.getters.RAMedium;
-                case "easy":
-                    return this.$store.getters.RAEasy;
-                default:
-                    return this.$store.getters.RAHard;
+                case "hard": return this.$store.getters.RAHard;
+                case "medium": return this.$store.getters.RAMedium;
+                case "easy": return this.$store.getters.RAEasy;
+                default: return this.$store.getters.RAHard; 
             }
         },
         scoreReqGrid() {
@@ -368,7 +344,7 @@ export default {
     },
     methods: {
         getImagePath(rank) {
-            return `../../rank-img/ra/${rank.toLowerCase()}.png`;
+            if(rank != null && !isNullOrEmpty(rank)) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
         },
         handleDropdownSelect(index) {
             this.currentTabIndex = index;
@@ -378,11 +354,6 @@ export default {
         },
         toggleBenchDetails(bench) {
             bench.detailsOpen = !bench.detailsOpen;
-        },
-        collapseBenchDetails() {
-            this.VTBenchmarks.forEach((element) => {
-                element.detailsOpen = false;
-            });
         },
         async handlePlayScenario(taskId) {
             const workshopId = await findWorkshopId(taskId);

@@ -52,7 +52,8 @@ export default {
 
       console.log('user: ' + cookiefiedName + ", id: " + cookiefiedSteamID);
       this.showPopup = false;
-    }
+      this.$emit('submit');
+    },
   }
 };
 </script>
