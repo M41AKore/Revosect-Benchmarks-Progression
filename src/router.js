@@ -11,9 +11,11 @@ import RevosectBenchmarksPageS2 from "./pages/RevosectBenchmarksPageS2.vue";
 import RevosectBenchmarksPageKvks from "./pages/RevosectBenchmarksPageKvks.vue";
 import LeaderboardsPage from "./pages/LeaderboardsPage.vue";
 import RevosectLeaderboardsPage from "./pages/RevosectLeaderboardsPage.vue";
+import RevosectLeaderboardsPageKvks from "./pages/RevosectLeaderboardsPageKvks.vue";
 import TaskView from "./pages/TaskView.vue";
 import AboutPage from "./pages/AboutPage.vue";
 import Me_Viewer from "./pages/Me_Viewer.vue";
+import HistoryStuff from "./pages/HistoryStuff.vue";
 // import TaskLeaderboard from "./pages/TaskLeaderboard.vue";
 
 const router = createRouter({
@@ -94,6 +96,11 @@ const router = createRouter({
           path: "ra",
           component: RevosectLeaderboardsPage,
         },
+        {
+          name: "ra-leaderboards-kvks",
+          path: "rakvks",
+          component: RevosectLeaderboardsPageKvks,
+        },
       ],
     },
     { path: "/about", component: AboutPage },
@@ -129,6 +136,11 @@ const router = createRouter({
           component: RevosectBenchmarksPageKvks,
         }
       ],
+    },
+    {
+      path: "/history",
+      component: HistoryStuff,
+      
     }
   ],
 });

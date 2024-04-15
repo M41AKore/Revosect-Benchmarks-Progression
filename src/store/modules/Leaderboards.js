@@ -1,12 +1,14 @@
 import { organizeLeaderboard } from "../../helpers/functions";
-import { easyBench, hardBench, mediumBench } from "../../helpers/revosectData";
+import { easyBench, hardBench, mediumBench } from "../../helpers/revosectData.js";
+import { easyBenchS2, hardBenchS2, mediumBenchS2 } from "../../helpers/revosectDataS2.js";
+
 export default {
   state() {
     return {
       selectedBenchmarkRA: 2,
       selectedCategoryRA: 3,
-      selectedSubCategoryRA: 1,
-      benchmarksRA: ["Easy", "Medium", "Hard"],
+      selectedSubCategoryRA: 3,
+      benchmarksRA: ["Easy", "Medium", "Hard", "HardS2"],  //this is what shows up in the dropdown
       categoriesRA: ["Clicking", "Tracking", "Switching", "Overall"],
       subCategoriesRA: {
         Clicking: ["Static", "Dynamic", "Overall"],
@@ -16,6 +18,13 @@ export default {
       hardLdb: [],
       mediumLdb: [],
       easyLdb: [],
+      hardLdbS2: [],
+      hardLbdKvks: [],
+      selectedBenchmarkRAKvks: 0,
+      selectedCategoryRAKvks: 3,
+      selectedSubCategoryRAKvks: 0,
+      benchmarksRAKvks: ["Hard" ],
+      categoriesRAKvks: [ "Clicking", "Tracking", "Switching", "Overall" ],
     };
   },
   getters: {
@@ -28,17 +37,35 @@ export default {
     easyLdb(state) {
       return state.easyLdb;
     },
+    hardLdbS2(state) {
+      return state.hardLdbS2;
+    },
+    hardLbdKvks(state) {
+      return state.hardLbdKvks;
+    },
     selectedBenchmarkRA(state) {
       return state.selectedBenchmarkRA;
     },
+    selectedBenchmarkRAKvks(state) {
+      return state.selectedBenchmarkRAKvks;
+    },
     selectedCategoryRA(state) {
-      return state.selectedCategoryRA;
+      return state.selectedSubCategoryRA;
+    },
+    selectedCategoryRAKvks(state) {
+      return state.selectedSubCategoryRAKvks;
     },
     selectedSubCategoryRA(state) {
       return state.selectedSubCategoryRA;
     },
+    selectedSubCategoryRAKvks(state) {
+      return state.selectedSubCategoryRAKvks;
+    },
     benchmarksRA(state) {
       return state.benchmarksRA;
+    },
+    benchmarksRAKvks(state) {
+      return state.benchmarksRAKvks;
     },
     categoriesRA(state) {
       return state.categoriesRA;
@@ -57,6 +84,9 @@ export default {
     setEasyLdb(state, payload) {
       state.easyLdb = payload;
     },
+    setHardLdbS2(state, payload) {
+      state.hardLdbS2 = payload;
+    },
     setSelectedBenchmarkRA(state, payload) {
       state.selectedBenchmarkRA = payload;
     },
@@ -69,14 +99,15 @@ export default {
   },
   actions: {
     async fetchLeaderboard(context, payload) {
-      const { bench, season } = payload;
+      const { mode, season } = payload;
 
+      console.log("mode: " + mode + ", " + ", season: " + season);
 
       let ldb = null;
       let fullBench = null;
-      switch (bench) {
+      switch (mode) {
         case "hard":
-          fullBench = hardBench;
+          fullBench = season == "s4" ? hardBench : hardBenchS2;
           break;
         case "medium":
           fullBench = mediumBench;
@@ -85,19 +116,30 @@ export default {
           fullBench = easyBench;
           break;
       }
+
+      console.log("hey");
+      console.log(fullBench);
+
       let playerList = {};
-      for (let b of fullBench) {
+      for (let scenario of fullBench) {
+
         const worker = new Worker("/scripts/leaderboard-worker.js");
         worker.onmessage = (event) => {
           playerList[event.data[1]] = event.data[0];
           if (Object.entries(playerList).length == fullBench.length) {
 
-            console.log(playerList.length + ", " + fullBench.length);
+            console.log("fullBench length: " + fullBench.length);
 
-            ldb = organizeLeaderboard(playerList, fullBench, bench, season);
-            switch (bench) {
+            ldb = organizeLeaderboard(playerList, fullBench, mode, season);
+
+            if(ldb == null) console.log("yes, is null");
+
+            switch (mode) {
               case "hard":
                 context.commit("setHardLdb", ldb);
+                break;
+              case "hards2":
+                context.commit("setHardLdbS2", ldb);
                 break;
               case "medium":
                 context.commit("setMediumLdb", ldb);
@@ -108,8 +150,10 @@ export default {
             }
           }
         };
-        worker.postMessage(bench);
+        worker.postMessage(scenario);
       }
+
+      console.log("ya");
     },
   },
 };

@@ -9,6 +9,12 @@ export const categories = [
   "TrackTS",
 ];
 
+export const categoriesActual = [
+  "Clicking",
+  "Tracking",
+  "Switching",
+];
+
 export const hardBench = [
   {
     name: "S4 Threeshot Hard",
@@ -420,7 +426,7 @@ export const mediumPoints = [900, 1080, 1380, 1740, 2025];
 
 export const easyBench = [
   {
-    "name": "S4 Fourshot Easy",
+    name: "S4 Fourshot Easy",
     "weapon": "Custom_RevoClicker",
     "id": "CsLevel.rAnak.S4.RV6DOO",
     "scores": [500, 600, 700, 800],

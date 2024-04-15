@@ -10,10 +10,18 @@
           rounded-sm
           transition
           hover:bg-slate-500
+          inline-block">AimLabs</router-link>
+      <router-link
+        :to="{ name: 'ra-leaderboards-kvks' }"
+        class="
+          border-2 border-slate-500
+          px-6
+          py-2
+          rounded-sm
+          transition
+          hover:bg-slate-500
           inline-block
-        "
-        >Revosect</router-link
-      >
+        ">KovaaK's</router-link>
     </base-card>
     <router-view></router-view>
   </div>

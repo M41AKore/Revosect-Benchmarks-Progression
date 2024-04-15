@@ -18,6 +18,7 @@ import {
     easyBench,
     categories,
     s4HardKvks,
+    categoriesActual,
 } from "./revosectData";
 import {
     hardSubPointsS2,
@@ -142,15 +143,19 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         case "easy":
             if (season == "s4") benchData = easyBench;
             else if (season == "s2") benchData = easyBenchS2;
-    }
+            break;
 
-    if (benchData == null) return;
+    }
+    if (benchData == null) {
+        console.log("benchData is null!");
+        return;
+    }
 
     //Filtering out the benchmark scenarios the player has played from the provided full list of played scenarios
     let playedBenchmarks = playerData.tasks.filter((n) =>
         benchData.some((n2) => n.id == n2.id)
     );
-
+    
     // console.log(JSON.parse(JSON.stringify(playedBenchmarks)));
     // console.log(JSON.parse(JSON.stringify(benchData)));
     //Computing the scores and ranks for each of the played benchm  ark scenarios
@@ -174,6 +179,8 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     ).map(([_, group]) => {
         return [...group.map(({ points }) => points)];
     });
+
+    if(season == "s2") console.log("pre subcats points");
 
     let aggregateSubCategoryPoints = null;
     //different point calculation between easy benchmarks and med/hard benchmarks
@@ -201,6 +208,8 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             subCategoryPointsList = [clicking, tracking, switching];
         }
     }
+
+    console.log("subcats length: " + subCategoryPointsList.length);
 
     aggregateSubCategoryPoints = subCategoryPointsList.map((category) => {
         return category.reduce((total, num) => total + num, 0);
@@ -283,6 +292,15 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     }
     else if (overallRank == "Omnipotent" && checkOmnipotency(allPointsList)) overallRank = "Omnipotence";
 
+    if(aggregateSubCategoryPoints == null) {
+        console.log("aggregateSubCategoryPoints is null");
+    }
+
+    if(season == "s2") {
+        console.log("subcatpoints: " + aggregateSubCategoryPoints);
+    }
+
+
     return {
         overallPoints,
         overallRank,
@@ -340,6 +358,9 @@ function getPlayerBenchmarkResults(playerTasks, benchData, mode, season) {
                             break;
                     }
                 }
+
+                console.log(rankData);
+
                 benchmark[j] = {
                     ...JSON.parse(JSON.stringify(benchmark[j])),
                     ...JSON.parse(JSON.stringify(playerTasks[i])),
@@ -485,8 +506,7 @@ function checkExcessPoints(
 }
 
 export function organizeLeaderboard(playerList, fullBench, mode, season) {
-
-    //console.log("mode:" + mode, ", season: " + season);
+    console.log("mode:" + mode + ", season: " + season);
 
     for (let task of fullBench) {
         let index = playerList[task.id].length;
@@ -502,6 +522,7 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
         Object.entries(playerList).forEach((task) => {
             allPlayers.push(...task[1]);
         });
+        console.log(allPlayers.length);
 
         let uniquePlayers = [
             ...new Map(
@@ -514,6 +535,7 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
                 scores: [],
             };
         });
+
         uniquePlayers.forEach((player) => {
             Object.entries(playerList).forEach((task) => {
                 let foundPlay = task[1].find(
@@ -528,8 +550,12 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
                 }
             });
         });
+
         let leaderboard = [];
         uniquePlayers.forEach((player) => {
+
+            console.log(player.scores);
+
             leaderboard.push({
                 username: player.username,
                 ...calculateRevosectBenchmarks(
@@ -539,13 +565,40 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
                 ),
             });
         });
+
+
+
+        console.log("ldb length: " + leaderboard.length);
+
         leaderboard.forEach((player) => {
-            /*let points = {};
-            player.subCategoryPoints.forEach((item, index) => {
-                points[categories[index]] = item;
-            });*/
-            player.subCategoryPoints.push(0);
-            //player.subCategoryPoints = points;
+            let points = {};
+
+            if(season == "s4") {
+                if(player.subCategoryPoints == null || player.subCategoryPoints.length < 1) {
+                    console.log("no subcategoryPoints s4");
+                }
+                else {
+                    player.subCategoryPoints.forEach((item, index) => {
+                        points[categoriesActual[index]] = item;
+                    });
+                }
+                
+            }
+            else if(season == "s2") {
+                if(player.subCategoryPoints == null || player.subCategoryPoints.length < 1) {
+                    console.log("no subcategoryPoints s2");
+                }
+                else {
+                    player.subCategoryPoints.forEach((item, index) => {
+                        points[categoriesS2[index]] = item;
+                    });
+                }
+
+                
+            }
+
+            //player.subCategoryPoints.push(0);       
+            player.subCategoryPoints = points;
         });
         leaderboard = leaderboard.sort(
             (a, b) => b.overallPoints - a.overallPoints

@@ -1,18 +1,16 @@
 <template>
-    <div class="space-y-10" style="background-color: blue;">
+    <div class="space-y-10" style="background-color: orange;">
         <base-card class="flex items-center gap-10">
-            <!-- *************************** -->
-            <!-- Benchmark Select          -->
-            <!-- *************************** -->
             <div>
                 <p class="mb-1 ml-1">Benchmark</p>
 
                 <dropdown
                     class="relative"
-                    :selectedTab="{ label: benchmarksRA[selectedBenchmarkRA] }">
+                    :selectedTab="{ label: benchmarksRAKvks[selectedBenchmarkRAKvks] }"
+                >
                     <li
                         class="w-full bg-slate-700 px-4 py-1 transition hover:bg-slate-500"
-                        v-for="(element, index) in benchmarksRA"
+                        v-for="(element, index) in benchmarksRAKvks"
                         :key="index"
                         @click="changeBenchmark(index)"
                     >
@@ -20,19 +18,15 @@
                     </li>
                 </dropdown>
             </div>
-
-            <!-- *************************** -->
-            <!-- Category Select          -->
-            <!-- *************************** -->
             <div>
                 <p class="mb-1 ml-1">Category</p>
                 <dropdown
                     class="relative"
-                    :selectedTab="{ label: categoriesRA[selectedCategoryRA] }"
+                    :selectedTab="{ label: categoriesRAKvks[selectedCategoryRAKvks] }"
                 >
                     <li
                         class="w-full bg-slate-700 px-4 py-1 transition hover:bg-slate-500"
-                        v-for="(element, index) in categoriesRA"
+                        v-for="(element, index) in categoriesRAKvks"
                         :key="index"
                         @click="changeCategory(index)"
                     >
@@ -40,21 +34,21 @@
                     </li>
                 </dropdown>
             </div>
-
-            <!-- *************************** -->
-            <!-- SubCategory Select           -->
-            <!-- *************************** -->
-            <div  v-if="selectedCategoryRA != 3 && benchmarksRA[selectedBenchmarkRA] == 'hards2'" style="background-color: palevioletred;">
+            <div v-if="selectedCategoryRAKvks != 3">
                 <p class="mb-1 ml-1">Sub-Category</p>
                 <dropdown
                     class="relative"
                     :selectedTab="{
-                        label: subCategoriesRA[categoriesRA[selectedCategoryRA]][selectedSubCategoryRA],
+                        label: subCategoriesRAKvks[
+                            categoriesRAKvks[selectedCategoryRAKvks]
+                        ][selectedSubCategoryRAKvks],
                     }"
                 >
                     <li
                         class="w-full bg-slate-700 px-4 py-1 transition hover:bg-slate-500"
-                        v-for="(element, index) in subCategoriesRA[categoriesRA[selectedCategoryRA]]"
+                        v-for="(element, index) in subCategoriesRAKvks[
+                            categoriesRAKvks[selectedCategoryRAKvks]
+                        ]"
                         :key="index"
                         @click="changeSubCategory(index)"
                     >
@@ -70,10 +64,7 @@
       </button> -->
         </base-card>
 
-        <!-- *************************** -->
-        <!-- Leaderboard list            -->
-        <!-- *************************** -->
-        <div 
+        <div
             v-if="leaderboardLoading"
             class="mb-16 flex items-center justify-center rounded-sm border border-slate-600 bg-slate-900 py-10"
         >
@@ -103,6 +94,18 @@
                     />
                     <span>{{ player.overallRank }}</span>
                 </p>
+                <!-- <span>
+          <chevron-icon class="h-5 w-5" direction="down"></chevron-icon>
+        </span> -->
+                <!-- <div class="col-span-5 flex">
+          <p
+            class="inline-block mr-2"
+            v-for="(benchmark, index) in player.benchmarks"
+            :key="index"
+          >
+            {{ benchmark.maxScore }}
+          </p>
+        </div> -->
             </router-link>
 
             <div class="mx-auto my-4 flex max-w-max items-center gap-1">
@@ -183,7 +186,7 @@ export default {
             currentPage: 0,
             goToPageInput: null,
             leaderboardLoading: false,
-            benchmark: ["Easy", "Medium", "Hard", "HardS2"],
+            benchmark: ["Easy", "Medium", "Hard"],
             category: ["Clicking", "Tracking", "Switching", "Overall"],
             subCategory: {
                 Clicking: ["Static", "Dynamic", "Overall"],
@@ -193,7 +196,7 @@ export default {
         };
     },
     watch: {
-        selectedBenchmarkRA(newIndex) {
+        selectedBenchmarkRAKvks(newIndex) {
 
             console.log("newIndex: " + newIndex);
 
@@ -207,7 +210,7 @@ export default {
             this.leaderboardLoading = true;
 
             if(bench == "hards2") {
-                this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
+                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s2" });
             }
             else {
                 this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
@@ -222,16 +225,16 @@ export default {
     },
     computed: {
         ...mapGetters([
-            "selectedBenchmarkRA",
-            "selectedCategoryRA",
-            "selectedSubCategoryRA",
-            "benchmarksRA",
-            "subCategoriesRA",
-            "categoriesRA",
+            "selectedBenchmarkRAKvks",
+            "selectedCategoryRAKvks",
+            "selectedSubCategoryRAKvks",
+            "benchmarksRAKvks",
+            "subCategoriesRAKvks",
+            "categoriesRAKvks",
         ]),
         selectedLeaderboard() {
             let ldb = null;
-            switch (this.selectedBenchmarkRA) {
+            switch (this.selectedBenchmarkRAKvks) {
                 case 0:
                     ldb = this.$store.getters.easyLdb;
                     break;
@@ -241,26 +244,27 @@ export default {
                 case 2:
                     ldb = this.$store.getters.hardLdb;
                     break;
-                case 3:
-                    ldb = this.$store.getters.hardLdbS2;
-                    break;
             }
+
+
+
+
             ldb.forEach((player) => {
                 player.selectedPoints = 0;
                 let cat =
-                    this.subCategory[this.category[this.selectedCategoryRA]];
-                if (this.selectedCategoryRA == 3) {
+                    this.subCategory[this.category[this.selectedCategoryRAKvks]];
+                if (this.selectedCategoryRAKvks == 3) {
                     player.selectedPoints = player.overallPoints;
                     return;
                 }
-                if (this.selectedSubCategoryRA == 2) {
+                if (this.selectedSubCategoryRAKvks == 2) {
                     player.selectedPoints =
                         player.subCategoryPoints[cat[0]] +
                         player.subCategoryPoints[cat[1]];
                     return;
                 }
                 player.selectedPoints =
-                    player.subCategoryPoints[cat[this.selectedSubCategoryRA]];
+                    player.subCategoryPoints[cat[this.selectedSubCategoryRAKvks]];
             });
             return ldb.sort((a, b) => b.selectedPoints - a.selectedPoints);
         },
@@ -299,24 +303,13 @@ export default {
     },
     methods: {
         changeBenchmark(index) {
-            this.$store.commit("setSelectedBenchmarkRA", index);
+            this.$store.commit("selectedBenchmarkRAKvks", index);
         },
         changeCategory(index) {
-            console.log("category select! " + index);
-
-            let bench = this.benchmark[this.selectedBenchmarkRA].toLowerCase();
-
-            if(bench == "hard") {
-                this.changeSubCategory(0);
-            }
-            else {
-                this.$store.commit("setSelectedCategoryRA", index);
-            }    
+            this.$store.commit("setSelectedCategoryRAKvks", index);
         },
         changeSubCategory(index) {
-
-            console.log("subcategory select! " + index);
-            this.$store.commit("setSelectedSubCategoryRA", index);
+            this.$store.commit("setSelectedSubCategoryRAKvks", index);
         },
 
         handlePageSelect(event) {
@@ -341,7 +334,7 @@ export default {
             this.goToPageInput = null;
         },
         getImagePath(rank) {
-            if(rank != null) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
+            return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
         },
 
 
@@ -349,12 +342,11 @@ export default {
 
     mounted() {
 
-        let bench = this.benchmark[this.selectedBenchmarkRA].toLowerCase();
-        console.log("selectedBenchmarkRA: " + this.selectedBenchmarkRA);
-        console.log("bench: " + bench);
+        
 
-        console.log("selectedCat: " + this.selectedCategoryRA);
-        console.log("selectedSubCat: " + this.selectedSubCategoryRA);
+        let bench = this.benchmark[this.selectedBenchmarkRAKvks].toLowerCase();
+        console.log("selectedBenchmarkRAKvks: " + this.selectedBenchmarkRAKvks);
+        console.log("bench: " + bench);
 
             if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
             if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
@@ -362,9 +354,7 @@ export default {
             this.leaderboardLoading = true;
 
             if(bench == "hards2") {
-                if(this.$store.getters.hardLdbS2 != 0) {
-                    this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
-                }
+                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s2" });
             }
             else {
                 this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });

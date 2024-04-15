@@ -1,11 +1,11 @@
-let count = 0;
-self.onmessage = async (e) => {
+let count = 1;
+self.onmessage = async (e, depth) => {
   let allData = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < count; i++) {
     const worker = new Worker("/scripts/ldb-fetch.js");
     worker.onmessage = async (event) => {
       allData.push(await event.data);
-      if (allData.length == 10) {
+      if (allData.length == count) {
         allData = allData.flat().sort((a, b) => a.rank - b.rank);
         postMessage([allData, e.data.id]);
       }
