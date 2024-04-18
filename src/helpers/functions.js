@@ -180,7 +180,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         return [...group.map(({ points }) => points)];
     });
 
-    if(season == "s2") console.log("pre subcats points");
+    //if(season == "s2") console.log("pre subcats points");
 
     let aggregateSubCategoryPoints = null;
     //different point calculation between easy benchmarks and med/hard benchmarks
@@ -208,8 +208,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             subCategoryPointsList = [clicking, tracking, switching];
         }
     }
-
-    console.log("subcats length: " + subCategoryPointsList.length);
+    //console.log("subcats length: " + subCategoryPointsList.length);
 
     aggregateSubCategoryPoints = subCategoryPointsList.map((category) => {
         return category.reduce((total, num) => total + num, 0);
@@ -296,10 +295,9 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         console.log("aggregateSubCategoryPoints is null");
     }
 
-    if(season == "s2") {
+    /*if(season == "s2") {
         console.log("subcatpoints: " + aggregateSubCategoryPoints);
-    }
-
+    }*/
 
     return {
         overallPoints,
@@ -358,9 +356,7 @@ function getPlayerBenchmarkResults(playerTasks, benchData, mode, season) {
                             break;
                     }
                 }
-
-                console.log(rankData);
-
+                //console.log(rankData);
                 benchmark[j] = {
                     ...JSON.parse(JSON.stringify(benchmark[j])),
                     ...JSON.parse(JSON.stringify(playerTasks[i])),
@@ -553,9 +549,7 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
 
         let leaderboard = [];
         uniquePlayers.forEach((player) => {
-
-            console.log(player.scores);
-
+            //console.log(player.scores);
             leaderboard.push({
                 username: player.username,
                 ...calculateRevosectBenchmarks(
@@ -566,10 +560,7 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
             });
         });
 
-
-
-        console.log("ldb length: " + leaderboard.length);
-
+        //console.log("ldb length: " + leaderboard.length);
         leaderboard.forEach((player) => {
             let points = {};
 
@@ -593,12 +584,10 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
                         points[categoriesS2[index]] = item;
                     });
                 }
-
-                
             }
-
             //player.subCategoryPoints.push(0);       
             player.subCategoryPoints = points;
+            //console.log(player.subCategoryPoints);
         });
         leaderboard = leaderboard.sort(
             (a, b) => b.overallPoints - a.overallPoints
@@ -704,7 +693,7 @@ export async function getKvksData() {
     if (!isNullOrEmpty(cookiefiedSteamID)) {
         if (s4HardKvks != null) {
             for (let i = 0; i < s4HardKvks.length; i++) {
-                let kvksScore = await kvksAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
+                let kvksScore = await kvksUserAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
                 if (kvksScore != null) kvksScores.push(kvksScore);
             }
 
@@ -718,7 +707,7 @@ export async function getKvksData() {
     //else console.log("no steamid in cookies!");
 }
 
-export async function kvksAPIcall(steamID64, leaderboardID, scenarioName) {
+export async function kvksUserAPIcall(steamID64, leaderboardID, scenarioName) {
     //leaderboardID = '666';
     //steamID64 = '76561197983102874';
     const postData = {

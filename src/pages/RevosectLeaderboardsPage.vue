@@ -1,12 +1,11 @@
 <template>
-    <div class="space-y-10" style="background-color: blue;">
+    <div class="space-y-10" >
         <base-card class="flex items-center gap-10">
             <!-- *************************** -->
             <!-- Benchmark Select          -->
             <!-- *************************** -->
             <div>
                 <p class="mb-1 ml-1">Benchmark</p>
-
                 <dropdown
                     class="relative"
                     :selectedTab="{ label: benchmarksRA[selectedBenchmarkRA] }">
@@ -28,8 +27,7 @@
                 <p class="mb-1 ml-1">Category</p>
                 <dropdown
                     class="relative"
-                    :selectedTab="{ label: categoriesRA[selectedCategoryRA] }"
-                >
+                    :selectedTab="{ label: categoriesRA[selectedCategoryRA] }">
                     <li
                         class="w-full bg-slate-700 px-4 py-1 transition hover:bg-slate-500"
                         v-for="(element, index) in categoriesRA"
@@ -44,14 +42,11 @@
             <!-- *************************** -->
             <!-- SubCategory Select           -->
             <!-- *************************** -->
-            <div  v-if="selectedCategoryRA != 3 && benchmarksRA[selectedBenchmarkRA] == 'hards2'" style="background-color: palevioletred;">
+            <div  v-if="selectedCategoryRA != 3 && benchmarksRA[selectedBenchmarkRA] == 'hards2'">
                 <p class="mb-1 ml-1">Sub-Category</p>
                 <dropdown
                     class="relative"
-                    :selectedTab="{
-                        label: subCategoriesRA[categoriesRA[selectedCategoryRA]][selectedSubCategoryRA],
-                    }"
-                >
+                    :selectedTab="{ label: subCategoriesRA[categoriesRA[selectedCategoryRA]][selectedSubCategoryRA] }">
                     <li
                         class="w-full bg-slate-700 px-4 py-1 transition hover:bg-slate-500"
                         v-for="(element, index) in subCategoriesRA[categoriesRA[selectedCategoryRA]]"
@@ -73,28 +68,26 @@
         <!-- *************************** -->
         <!-- Leaderboard list            -->
         <!-- *************************** -->
-        <div 
+        <div style="background-color: #272727;"
             v-if="leaderboardLoading"
-            class="mb-16 flex items-center justify-center rounded-sm border border-slate-600 bg-slate-900 py-10"
-        >
+            class="mb-16 flex items-center justify-center rounded-sm border border-slate-600 bg-slate-900 py-10">
             <loading-spinner></loading-spinner>
         </div>
-        <div v-else class="rounded-sm border border-slate-600 bg-slate-900">
-            <div class="mx-2 mt-2 grid grid-cols-4 bg-slate-600 px-6 py-2">
+        <div v-else class="rounded-sm border bg-slate-900" style="background-color: #111; border-color: #222; margin-top: 15px;">
+            <div class="mx-2 mt-2 grid grid-cols-4 bg-slate-600 px-6 py-2" style="background-color: #7F1D1D;">
                 <p>Rank</p>
                 <p>Name</p>
                 <p>Points</p>
                 <p>Overall Rank</p>
             </div>
-            <router-link
+            <router-link style="background-color: #333;"
                 v-for="(player, index) in paginatedPlayerList.data"
                 :key="index"
                 class="mx-2 mt-1 grid grid-cols-4 bg-slate-700 px-6 py-2"
-                :to="'/profile/' + player.username + '/'"
-            >
+                :to="'/users/' + player.username + '/'">
                 <p>{{ paginatedPlayerList.start + index + 1 }}</p>
                 <p>{{ player.username }}</p>
-                <p>{{ player.selectedPoints }}</p>
+                <p>{{ formatPoints(player.selectedPoints) }}</p>
                 <p class="flex items-center space-x-2">
                     <img
                         :src="getImagePath(player.overallRank)"
@@ -190,15 +183,13 @@ export default {
                 Tracking: ["Precise", "Reactive", "Overall"],
                 Switching: ["Flick", "Track", "Overall"],
             },
+            lastCategoryIndex: 3,
+            lastSubCategoryIndex: 3,
         };
     },
     watch: {
         selectedBenchmarkRA(newIndex) {
-
-            console.log("newIndex: " + newIndex);
-
             let bench = this.benchmark[newIndex].toLowerCase();
-
             console.log("bench: " + bench);
 
             if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
@@ -206,13 +197,8 @@ export default {
             if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
             this.leaderboardLoading = true;
 
-            if(bench == "hards2") {
-                this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
-            }
-            else {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
-            }
-            
+            if(bench == "hards2") this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
+            else this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });       
         },
         selectedLeaderboard(newArr) {
             if (newArr.length) {
@@ -245,22 +231,34 @@ export default {
                     ldb = this.$store.getters.hardLdbS2;
                     break;
             }
+
+            console.log("selected benchmark: " + this.selectedBenchmarkRA);
+            console.log("selected cat: " + this.selectedCategoryRA);
+
             ldb.forEach((player) => {
-                player.selectedPoints = 0;
-                let cat =
-                    this.subCategory[this.category[this.selectedCategoryRA]];
-                if (this.selectedCategoryRA == 3) {
-                    player.selectedPoints = player.overallPoints;
-                    return;
+
+                player.selectedPoints = player.overallPoints;
+
+                if(this.selectedBenchmarkRA < 3) {
+
+                    if(this.selectedCategoryRA == 0) player.selectedPoints = player.subCategoryPoints.Clicking;
+                    else if(this.selectedCategoryRA == 1) player.selectedPoints = player.subCategoryPoints.Tracking;
+                    else if(this.selectedCategoryRA == 2) player.selectedPoints = player.subCategoryPoints.Switching;
+                    else if(this.selectedCategoryRA == 3) player.selectedPoints = player.overallPoints;
                 }
-                if (this.selectedSubCategoryRA == 2) {
-                    player.selectedPoints =
-                        player.subCategoryPoints[cat[0]] +
-                        player.subCategoryPoints[cat[1]];
-                    return;
+                else {
+                    player.selectedPoints = 0;
+                    let cat = this.subCategory[this.category[this.selectedCategoryRA]];
+                    if (this.selectedCategoryRA == 3) {
+                        player.selectedPoints = player.overallPoints;
+                        return;
+                    }
+                    if (this.selectedSubCategoryRA == 2) {
+                        player.selectedPoints = player.subCategoryPoints[cat[0]] + player.subCategoryPoints[cat[1]];
+                        return;
+                    }
+                    player.selectedPoints = player.subCategoryPoints[cat[this.selectedSubCategoryRA]];
                 }
-                player.selectedPoints =
-                    player.subCategoryPoints[cat[this.selectedSubCategoryRA]];
             });
             return ldb.sort((a, b) => b.selectedPoints - a.selectedPoints);
         },
@@ -298,25 +296,45 @@ export default {
         },
     },
     methods: {
+        formatPoints(points) {
+            if(points == null || points == undefined) return 0;
+            if (Number.isInteger(points)) return points;
+            else return points.toFixed(3);
+        },
         changeBenchmark(index) {
             this.$store.commit("setSelectedBenchmarkRA", index);
         },
         changeCategory(index) {
+            if(index == this.lastCategoryIndex) return;
+
             console.log("category select! " + index);
 
             let bench = this.benchmark[this.selectedBenchmarkRA].toLowerCase();
+            console.log("bench select " + bench);
 
-            if(bench == "hard") {
-                this.changeSubCategory(0);
+            switch(bench) {
+                case "hard":
+                case "medium":
+                case "easy":
+                    this.changeSubCategory(index);
+                    break;
+                
+                default:
+                    this.$store.commit("setSelectedCategoryRA", index);
+                    
+                    break;
             }
-            else {
-                this.$store.commit("setSelectedCategoryRA", index);
-            }    
+
+            this.lastCategoryIndex = index;                               
         },
         changeSubCategory(index) {
 
-            console.log("subcategory select! " + index);
-            this.$store.commit("setSelectedSubCategoryRA", index);
+            if(index == this.lastSubCategoryIndex) return;
+            else {
+                console.log("subcategory select! " + index);
+                this.$store.commit("setSelectedSubCategoryRA", index);
+                this.lastSubCategoryIndex = index;
+            }        
         },
 
         handlePageSelect(event) {
@@ -348,28 +366,21 @@ export default {
     },
 
     mounted() {
-
         let bench = this.benchmark[this.selectedBenchmarkRA].toLowerCase();
-        console.log("selectedBenchmarkRA: " + this.selectedBenchmarkRA);
-        console.log("bench: " + bench);
 
-        console.log("selectedCat: " + this.selectedCategoryRA);
-        console.log("selectedSubCat: " + this.selectedSubCategoryRA);
+        if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
+        if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
+        if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
+        this.leaderboardLoading = true;
 
-            if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
-            if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
-            if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
-            this.leaderboardLoading = true;
-
-            if(bench == "hards2") {
-                if(this.$store.getters.hardLdbS2 != 0) {
-                    this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
-                }
+        if(bench == "hards2") {
+            if(this.$store.getters.hardLdbS2 != 0) {
+                this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
             }
-            else {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
-            }
-            
+        }
+         else {
+            this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
+        }         
     },
 };
 </script>

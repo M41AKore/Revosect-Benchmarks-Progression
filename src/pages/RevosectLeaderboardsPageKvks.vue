@@ -84,15 +84,15 @@
                 :to="'/profile/' + player.username + '/'"
             >
                 <p>{{ paginatedPlayerList.start + index + 1 }}</p>
-                <p>{{ player.username }}</p>
+                <p>{{ player.name }}</p>
                 <p>{{ player.selectedPoints }}</p>
                 <p class="flex items-center space-x-2">
                     <img
-                        :src="getImagePath(player.overallRank)"
+                        :src="getImagePath(player.benchResult.overallRank)"
                         alt=""
                         class="inline-block h-6 w-6"
                     />
-                    <span>{{ player.overallRank }}</span>
+                    <span>{{ player.benchResult.overallRank }}</span>
                 </p>
                 <!-- <span>
           <chevron-icon class="h-5 w-5" direction="down"></chevron-icon>
@@ -197,25 +197,16 @@ export default {
     },
     watch: {
         selectedBenchmarkRAKvks(newIndex) {
-
-            console.log("newIndex: " + newIndex);
-
+            /*console.log("newIndex: " + newIndex);
             let bench = this.benchmark[newIndex].toLowerCase();
-
             console.log("bench: " + bench);
 
             if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
             if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
-            if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
+            if (bench == "easy" && this.$store.getters.easyLdb != 0) return;*/
             this.leaderboardLoading = true;
 
-            if(bench == "hards2") {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s2" });
-            }
-            else {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
-            }
-            
+            this.$store.dispatch("fetchKvksLeaderboard", { mode: "hard", season: "s4" });
         },
         selectedLeaderboard(newArr) {
             if (newArr.length) {
@@ -236,22 +227,19 @@ export default {
             let ldb = null;
             switch (this.selectedBenchmarkRAKvks) {
                 case 0:
-                    ldb = this.$store.getters.easyLdb;
+                    ldb = this.$store.getters.hardLbdKvks;
                     break;
-                case 1:
+                /*case 1:
                     ldb = this.$store.getters.mediumLdb;
                     break;
                 case 2:
-                    ldb = this.$store.getters.hardLdb;
+                    ldb = this.$store.getters.hardLdb;*/
                     break;
             }
 
-
-
-
             ldb.forEach((player) => {
-                player.selectedPoints = 0;
-                let cat =
+                player.selectedPoints = 69;
+                /*let cat =
                     this.subCategory[this.category[this.selectedCategoryRAKvks]];
                 if (this.selectedCategoryRAKvks == 3) {
                     player.selectedPoints = player.overallPoints;
@@ -264,7 +252,7 @@ export default {
                     return;
                 }
                 player.selectedPoints =
-                    player.subCategoryPoints[cat[this.selectedSubCategoryRAKvks]];
+                    player.subCategoryPoints[cat[this.selectedSubCategoryRAKvks]];*/
             });
             return ldb.sort((a, b) => b.selectedPoints - a.selectedPoints);
         },
@@ -341,24 +329,7 @@ export default {
     },
 
     mounted() {
-
-        
-
-        let bench = this.benchmark[this.selectedBenchmarkRAKvks].toLowerCase();
-        console.log("selectedBenchmarkRAKvks: " + this.selectedBenchmarkRAKvks);
-        console.log("bench: " + bench);
-
-            if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
-            if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
-            if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
-            this.leaderboardLoading = true;
-
-            if(bench == "hards2") {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s2" });
-            }
-            else {
-                this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
-            }
+        this.$store.dispatch("fetchKvksLeaderboard", { mode: "hard", season: "s4" });
             
     },
 };

@@ -40,7 +40,14 @@
           <span
             >rA Rank - {{ overallRankRA }}
             <img
-              :src="`../../rank-img/ra/${imagePath(overallRankRA)}.png`"
+              :src="`../../rank-img/ra/s4/${imagePath(overallRankRA)}.png`"
+              class="h-5 inline"
+              alt=""
+          /></span>
+          <span
+            >rA S2 Rank - {{ overallRankRAS2 }} 
+            <img
+              :src="`../../rank-img/ra/s2/${imagePath(overallRankRAS2)}.png`"
               class="h-5 inline"
               alt=""
           /></span>

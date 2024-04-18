@@ -1,7 +1,7 @@
 <template>
-  <div class="container px-[8%] space-y-4 mb-10" style="background-color: aquamarine;">
+  <div class="container px-[8%] space-y-4 mb-10">
     <base-card class="mt-4 flex gap-4">
-      <router-link
+      <router-link 
         :to="{ name: 'ra-leaderboards' }"
         class="
           border-2 border-slate-500

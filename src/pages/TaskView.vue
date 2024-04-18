@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-10 px-[8%] mb-10">
+  <div class="mt-10 px-[8%] mb-10" >
     <!-- <div class="relative">
       
     </div> -->
@@ -57,22 +57,28 @@
       </div>
     </div>
 
-    <section
+
+    <!-- ************************ -->
+    <!-- task leaderboard results -->
+    <!-- ************************ -->
+    <section style="background-color: #333;"
       v-if="isLoading"
-      class="bg-slate-900 mt-10 p-3 rounded-lg grid place-items-center"
-    >
+      class="bg-slate-900 mt-10 p-3 rounded-lg grid place-items-center">
       <loading-spinner></loading-spinner>
     </section>
-    <section v-else class="bg-slate-900 mt-10 p-3 rounded-lg">
-      <div class="grid grid-cols-7 bg-slate-800 p-2 text-lg rounded-t">
+    <section v-else class="bg-slate-900 mt-10 p-3 rounded-lg" style="background-color: #111;">
+      <!-- Headers -->
+      <div class="grid grid-cols-7 bg-slate-800 p-2 text-lg rounded-t" style="background-color: #7F1D1D;">
         <p class="ml-2">Rank</p>
         <p class="ml-2 col-span-2">Name</p>
         <p>Score</p>
         <p>Hits</p>
         <p>Accuracy</p>
       </div>
+
+      <!-- Entries -->
       <div>
-        <div
+        <div style="background-color: #333;"
           class="
             grid grid-cols-7
             px-4
@@ -89,8 +95,7 @@
           <router-link
             :to="'/profile/' + task.username"
             class="col-span-2 hover:text-slate-300"
-            >{{ task.username }}</router-link
-          >
+            >{{ task.username }}</router-link>
           <p>{{ task.score }}</p>
           <p>{{ task.shotsHit }}</p>
           <p>{{ task.accuracy }}</p>
@@ -101,8 +106,7 @@
               :href="replayLink(task.playId)"
               class="flex items-center gap-2 transition hover:text-slate-400"
             >
-              <play-icon class="h-5 w-5"></play-icon> Replay</a
-            >
+              <play-icon class="h-5 w-5"></play-icon> Replay</a>
             <div
               class="
                 w-20
@@ -117,8 +121,10 @@
           </div>
         </div>
       </div>
+
+      <!-- Page Buttons -->
       <div class="flex max-w-max gap-2 mx-auto mt-4">
-        <button
+        <button style="background-color: #333;"
           class="
             px-3
             py-2.5
@@ -135,7 +141,7 @@
           <chevron-icon class="h-5 w-5" direction="left"></chevron-icon>
         </button>
         <div class="flex gap-1">
-          <div
+          <div style="background-color: #333;"
             class="py-2 px-4 bg-slate-700 transition flex items-center"
             v-for="page in pageNumbers"
             :key="page"
@@ -148,7 +154,7 @@
             <span class="pointer-events-none">{{ page }}</span>
           </div>
         </div>
-        <button
+        <button style="background-color: #333;"
           class="
             px-3
             py-2.5
@@ -166,7 +172,7 @@
         >
           <chevron-icon class="h-5 w-5" direction="right"></chevron-icon>
         </button>
-        <input
+        <input style="background-color: #333;"
           type="text"
           v-model.number="goToPageInput"
           @keydown.enter="goToPage"
@@ -183,7 +189,7 @@
             ring-inset ring-slate-300
           "
         />
-        <button
+        <button style="background-color: #333;"
           class="
             text-center
             bg-slate-600

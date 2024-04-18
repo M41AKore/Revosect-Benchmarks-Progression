@@ -163,7 +163,7 @@ export const hardBench = [
     scores: [76, 82, 88, 94, 100],
     category: "Switching",
     subCategory: "HybridTS",
-    categoryID: 6,
+    categoryID: 7,
     scenarioID: 15,
   },
   {
@@ -173,7 +173,7 @@ export const hardBench = [
     scores: [75, 80, 85, 90, 95],
     category: "Switching",
     subCategory: "HybridTS",
-    categoryID: 6,
+    categoryID: 7,
     scenarioID: 16,
   },
   {
@@ -183,7 +183,7 @@ export const hardBench = [
     scores: [48, 52, 56, 60, 64],
     category: "Switching",
     subCategory: "TrackTS",
-    categoryID: 6,
+    categoryID: 8,
     scenarioID: 17,
   },
   {
@@ -193,7 +193,7 @@ export const hardBench = [
     scores: [41, 44, 47, 50, 53],
     category: "Switching",
     subCategory: "TrackTS",
-    categoryID: 6,
+    categoryID: 8,
     scenarioID: 18,
   }
 ];
