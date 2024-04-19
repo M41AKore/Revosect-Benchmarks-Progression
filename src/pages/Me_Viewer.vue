@@ -153,7 +153,10 @@ export default {
         : this.RAEasyS2.overallRank;
     },
     overallRankRAS4KVKS() {
-      return this.RAKvksHard.overallRank != "Unranked" ? this.RAKvksHard.overallRank : "Unranked";
+      if(this.RAKvksHard != null) {
+        return this.RAKvksHard.overallRank != "Unranked" ? this.RAKvksHard.overallRank : "Unranked";
+      }
+      else return "Unranked";
     },
     playerSkill() {
       if (this.playerInfo.skill) {

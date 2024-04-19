@@ -5,7 +5,7 @@ export const overrides = {
       id: "CsLevel.rA Theo.rA Airtr.R3GBA9",
       avgAcc: 47.029954274495445,
       count: 3,
-      maxScore: 3000,
+      maxScore: 2849,
       avgScore: 2663,
       maxAcc: 50.3268,
     },

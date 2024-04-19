@@ -34,7 +34,9 @@
     <!-- ********************************* -->
     <!--          Chart Race Bars          -->
     <!-- ********************************* -->
-    <div class="chart">
+    <div style="display:flex;flex-direction: row;">
+
+      <div class="chart">
       <transition-group name="slide-fade">
         <div class="bar-container" v-for="(bar, index) in sortedVisibleBars" :key="bar.label">
           <div class="label" :style="{ width: '30px'}">#{{ index+1 }}</div>
@@ -46,11 +48,23 @@
         </div>
       </transition-group>
     </div>
-  </div>
+
+    <div class="chat-sidebar">
+      <div class="messages" ref="messagesContainer">
+        <div v-for="(message, index) in messages" :key="index" class="message">
+          <span v-for="(part, partIndex) in message.parts" :key="partIndex" :style="{ color: part.color }">{{ part.text }}</span>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+
+  </div> 
 </template>
 
 <script>
 import barDataFile from "../helpers/barData.json";
+import eventDataFile from "../helpers/events.json";
 
 export default {
   data() {
@@ -63,6 +77,9 @@ export default {
       speed: 500, // ms tick
       barHeight: 50,
       racing: false,
+      scoreEvents: eventDataFile.events,
+      messages: [],
+      //totalPosts: 0,
     };
   },
   computed: {
@@ -127,15 +144,53 @@ export default {
           }
         });
         this.sortedVisibleBars;
-      } else {
-        this.stopRace();
-      }
+
+        //console.log("step " + this.currentStep);
+        this.checkEvents();
+      } 
+      else this.stopRace();
     },
     updateBars() {
       //console.log("Visible Bars:", this.visibleBars);
-    }
+    },
+    checkEvents() {
+      let start = new Date(this.startDate);
+      let curr = new Date(start.getTime() + (this.currentStep * 24 * 60 * 60 * 1000));
+ 
+      let toPost = [];
+      for (let i = 0; i < this.scoreEvents.length; i++) {
+        let d = new Date(this.scoreEvents[i].date);
+        let yesterday = new Date(curr); // yesterday's date
+        yesterday.setDate(curr.getDate() - 1);
+
+        if(curr > d && d > yesterday) {
+          console.log(this.scoreEvents[i].eventMessage); 
+          toPost.push(this.scoreEvents[i].eventMessage);
+        }   
+      }
+            
+      if(toPost.length > 0) {
+        let c = `${curr.getFullYear()}/${(curr.getMonth() + 1)}/${curr.getDate()}`;
+        this.addMessage({ parts: [{ text: "--- " + c + " ---", color: 'white' }] });
+
+        for (let i = 0; i < toPost.length; i++) {
+          this.addMessage({ parts: [{ text: toPost[i], color: 'white' }] });
+          //this.totalPosts += 1;
+          //console.log("total available: " + this.scoreEvents.length + ", posted: " + this.totalPosts);
+        }
+
+        this.$nextTick(() => { this.scrollToBottom(); });
+      }
+    },
+    addMessage(message) {
+      //let msg =  { parts: [{ text: 'Hello', color: 'blue' }, { text: " world!", color: 'red' }] },
+      this.messages.push(message);
+    },
+    scrollToBottom() {
+      const container = this.$refs.messagesContainer;
+      container.scrollTop = container.scrollHeight;
+    },
   },
-  
 };
 </script>
 
@@ -183,5 +238,27 @@ export default {
   color: #fff; 
   padding: 5px 10px; 
   font-size: 16px;
+}
+
+
+.chat-sidebar {
+  background-color: #111;
+  position: fixed;
+  top: 10%;
+  right: 0;
+  height: 80%;
+  width: 300px; /* Adjust width as needed */
+  overflow-y: auto; /* Enable scrollbar if content exceeds height */
+}
+.messages {
+  overflow-y: scroll;
+  height: calc(100% - 0px);
+}
+.message {
+  margin-bottom: 5px;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
 }
 </style>

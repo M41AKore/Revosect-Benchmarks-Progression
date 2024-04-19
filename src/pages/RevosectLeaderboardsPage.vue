@@ -99,7 +99,7 @@
             </router-link>
 
             <div class="mx-auto my-4 flex max-w-max items-center gap-1">
-                <button
+                <button style="background-color: #333; border-color: #222;"
                     type="button"
                     class="inline-block h-full bg-slate-700 px-3 py-2.5"
                     @click="currentPage--"
@@ -116,16 +116,16 @@
                 </button>
 
                 <!-- Center Buttons -->
-                <div class="flex gap-1">
-                    <p
+                <div class="flex gap-1" >
+                    <p 
                         class="border border-slate-700 bg-slate-700 py-2 px-4 hover:cursor-pointer"
                         v-for="page in pageNumbers"
                         :key="page"
-                        :class="{
-                            'pointer-events-none border-slate-400 bg-slate-600':
-                                this.currentPage == page - 1,
-                            ' hover:bg-slate-600': !!parseInt(page),
-                        }"
+                        :class="{ 'pointer-events-none border-slate-400 bg-slate-600': this.currentPage == page - 1, ' hover:bg-slate-600': !!parseInt(page), }"
+                        :style="{ 
+                            'background-color': (this.currentPage == page - 1 ? '#555' : '#333'),
+                            'border-color': (this.currentPage == page - 1 ? '#888' : '#222')
+                         }"
                         @click="handlePageSelect($event)"
                     >
                         {{ page }}
@@ -133,7 +133,7 @@
                 </div>
                 <!-- Center Buttons -->
 
-                <button
+                <button style="background-color: #333; border-color: #222;"
                     type="button"
                     class="inline-block bg-slate-700 px-3 py-2.5 transition hover:bg-slate-600"
                     @click="currentPage++"
@@ -143,19 +143,19 @@
                             : 'disabled pointer-events-none text-slate-500'
                     "
                 >
-                    <chevron-icon
+                    <chevron-icon 
                         class="h-5 w-5"
                         direction="right"
                     ></chevron-icon>
                 </button>
-                <input
+                <input style="background-color: #333;"
                     type="text"
                     v-model.number="goToPageInput"
                     @keydown.enter="goToPage"
                     @blur="goToPage"
                     class="ml-2 w-10 bg-slate-600 py-2 text-center outline-none ring-inset ring-slate-300 transition focus:ring-2"
                 />
-                <button
+                <button style="background-color: #333;"
                     class="w-10 bg-slate-600 py-2 text-center outline-none transition hover:bg-slate-500"
                     @click="goToPage"
                 >
@@ -359,10 +359,13 @@ export default {
             this.goToPageInput = null;
         },
         getImagePath(rank) {
-            if(rank != null) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
+            if(this.benchmark[this.selectedBenchmarkRA].toLowerCase() == "hards2") {
+                if(rank != null) return `../../rank-img/ra/s2/${rank.toLowerCase()}.png`;
+            }
+            else {
+                if(rank != null) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
+            }
         },
-
-
     },
 
     mounted() {

@@ -107,6 +107,16 @@ export default {
     setSelectedSubCategoryRA(state, payload) {
       state.selectedSubCategoryRA = payload;
     },
+
+    setSelectedBenchmarkRAKvks(state, payload) {
+      state.selectedBenchmarkRAKvks = payload;
+    },
+    setSelectedCategoryRAKvks(state, payload) {
+      state.selectedCategoryRAKvks = payload;
+    },
+    setSelectedSubCategoryRAKvks(state, payload) {
+      state.selectedSubCategoryRAKvks = payload;
+    },
   },
   actions: {
     async fetchKvksLeaderboard(context, payload) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-10" style="background-color: orange;">
+    <div class="space-y-10">
         <base-card class="flex items-center gap-10">
             <div>
                 <p class="mb-1 ml-1">Benchmark</p>
@@ -34,7 +34,7 @@
                     </li>
                 </dropdown>
             </div>
-            <div v-if="selectedCategoryRAKvks != 3">
+            <div v-if="selectedCategoryRAKvks != 3 && benchmarksRAKvks[selectedBenchmarkRAKvks] == 'hards2'">
                 <p class="mb-1 ml-1">Sub-Category</p>
                 <dropdown
                     class="relative"
@@ -64,20 +64,20 @@
       </button> -->
         </base-card>
 
-        <div
+        <div style="background-color: #272727;"
             v-if="leaderboardLoading"
             class="mb-16 flex items-center justify-center rounded-sm border border-slate-600 bg-slate-900 py-10"
         >
             <loading-spinner></loading-spinner>
         </div>
-        <div v-else class="rounded-sm border border-slate-600 bg-slate-900">
-            <div class="mx-2 mt-2 grid grid-cols-4 bg-slate-600 px-6 py-2">
+        <div v-else class="rounded-sm border border-slate-600 bg-slate-900" style="background-color: #111; border-color: #222; margin-top: 15px;">
+            <div class="mx-2 mt-2 grid grid-cols-4 bg-slate-600 px-6 py-2" style="background-color: #7F1D1D;">
                 <p>Rank</p>
                 <p>Name</p>
                 <p>Points</p>
                 <p>Overall Rank</p>
             </div>
-            <router-link
+            <router-link style="background-color: #333;"
                 v-for="(player, index) in paginatedPlayerList.data"
                 :key="index"
                 class="mx-2 mt-1 grid grid-cols-4 bg-slate-700 px-6 py-2"
@@ -85,7 +85,7 @@
             >
                 <p>{{ paginatedPlayerList.start + index + 1 }}</p>
                 <p>{{ player.name }}</p>
-                <p>{{ player.selectedPoints }}</p>
+                <p>{{ formatPoints(player.selectedPoints) }}</p>
                 <p class="flex items-center space-x-2">
                     <img
                         :src="getImagePath(player.benchResult.overallRank)"
@@ -109,7 +109,7 @@
             </router-link>
 
             <div class="mx-auto my-4 flex max-w-max items-center gap-1">
-                <button
+                <button style="background-color: #333; border-color: #222;"
                     type="button"
                     class="inline-block h-full bg-slate-700 px-3 py-2.5"
                     @click="currentPage--"
@@ -136,6 +136,10 @@
                                 this.currentPage == page - 1,
                             ' hover:bg-slate-600': !!parseInt(page),
                         }"
+                        :style="{ 
+                            'background-color': (this.currentPage == page - 1 ? '#555' : '#333'),
+                            'border-color': (this.currentPage == page - 1 ? '#888' : '#222')
+                         }"
                         @click="handlePageSelect($event)"
                     >
                         {{ page }}
@@ -143,7 +147,7 @@
                 </div>
                 <!-- Center Buttons -->
 
-                <button
+                <button style="background-color: #333; border-color: #222;"
                     type="button"
                     class="inline-block bg-slate-700 px-3 py-2.5 transition hover:bg-slate-600"
                     @click="currentPage++"
@@ -158,14 +162,14 @@
                         direction="right"
                     ></chevron-icon>
                 </button>
-                <input
+                <input style="background-color: #333; border-color: #222;"
                     type="text"
                     v-model.number="goToPageInput"
                     @keydown.enter="goToPage"
                     @blur="goToPage"
                     class="ml-2 w-10 bg-slate-600 py-2 text-center outline-none ring-inset ring-slate-300 transition focus:ring-2"
                 />
-                <button
+                <button style="background-color: #333; border-color: #222;"
                     class="w-10 bg-slate-600 py-2 text-center outline-none transition hover:bg-slate-500"
                     @click="goToPage"
                 >
@@ -193,6 +197,8 @@ export default {
                 Tracking: ["Precise", "Reactive", "Overall"],
                 Switching: ["Flick", "Track", "Overall"],
             },
+            lastCategoryIndex: 0,
+            lastSubCategoryIndex: 0,
         };
     },
     watch: {
@@ -238,21 +244,24 @@ export default {
             }
 
             ldb.forEach((player) => {
-                player.selectedPoints = 69;
-                /*let cat =
-                    this.subCategory[this.category[this.selectedCategoryRAKvks]];
+                player.selectedPoints = 0;
+
+                console.log("selected: " + this.selectedCategoryRAKvks);
+                let cat = this.category[this.selectedCategoryRAKvks];
+                console.log("cat to get " + cat);
+
+                let bench = { ...player.benchResult };
+
                 if (this.selectedCategoryRAKvks == 3) {
-                    player.selectedPoints = player.overallPoints;
+                    console.log(bench.overallPoints);
+                    player.selectedPoints = bench.overallPoints;
                     return;
                 }
-                if (this.selectedSubCategoryRAKvks == 2) {
-                    player.selectedPoints =
-                        player.subCategoryPoints[cat[0]] +
-                        player.subCategoryPoints[cat[1]];
-                    return;
+                else {
+                    let catPoints = { ...bench.subCategoryPoints };
+                    //console.log(catPoints);
+                    player.selectedPoints = catPoints[this.selectedCategoryRAKvks];           
                 }
-                player.selectedPoints =
-                    player.subCategoryPoints[cat[this.selectedSubCategoryRAKvks]];*/
             });
             return ldb.sort((a, b) => b.selectedPoints - a.selectedPoints);
         },
@@ -290,16 +299,47 @@ export default {
         },
     },
     methods: {
+        formatPoints(points) {
+            if(points == null || points == undefined) return 0;
+            if (Number.isInteger(points)) return points;
+            else return points.toFixed(3);
+        },
         changeBenchmark(index) {
             this.$store.commit("selectedBenchmarkRAKvks", index);
         },
+
         changeCategory(index) {
-            this.$store.commit("setSelectedCategoryRAKvks", index);
+            if(index == this.lastCategoryIndex) return;
+
+            console.log("category select! " + index);
+
+            let bench = this.benchmark[this.selectedBenchmarkRAKvks].toLowerCase();
+            console.log("bench select " + bench);
+
+            switch(bench) {
+                case "hard":
+                case "medium":
+                case "easy":
+                    this.changeSubCategory(index);
+                    break;
+                
+                default:
+                    this.$store.commit("setSelectedCategoryRAKvks", index);
+                    
+                    break;
+            }
+
+            this.lastCategoryIndex = index;                               
         },
         changeSubCategory(index) {
-            this.$store.commit("setSelectedSubCategoryRAKvks", index);
-        },
 
+            if(index == this.lastSubCategoryIndex) return;
+            else {
+                console.log("subcategory select! " + index);
+                this.$store.commit("setSelectedSubCategoryRAKvks", index);
+                this.lastSubCategoryIndex = index;
+            }        
+        },
         handlePageSelect(event) {
             let value = parseInt(event.target.textContent);
             if (value) {
@@ -324,13 +364,11 @@ export default {
         getImagePath(rank) {
             return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
         },
-
-
     },
 
     mounted() {
+        this.changeCategory(3);
         this.$store.dispatch("fetchKvksLeaderboard", { mode: "hard", season: "s4" });
-            
     },
 };
 </script>

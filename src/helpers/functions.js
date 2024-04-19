@@ -47,6 +47,7 @@ import {
 } from "./queries.js";
 import _, { isEqual } from "lodash";
 import axios from "axios";
+import * as overridesFile from "./score-overrides.js";
 
 //UTILITY FUNCTIONS
 
@@ -155,6 +156,36 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
     let playedBenchmarks = playerData.tasks.filter((n) =>
         benchData.some((n2) => n.id == n2.id)
     );
+
+    // score overrides check
+    if (playerData.id in overridesFile.overrides) {
+        const matchedEntry = overridesFile.overrides[playerData.id];
+
+        if(matchedEntry != null) {    
+            for(let j=0;j<matchedEntry.length;j++) {
+                let found = false;
+
+                for (let i = 0; i < playedBenchmarks.length; i++) {
+                    //console.log("taskid:", playerData.tasks[i].id + " matchid: " + matchedEntry[0].id); 
+                    if(playedBenchmarks[i].id == matchedEntry[j].id) {
+                        found = true;
+                        playerData.tasks[i].maxScore = matchedEntry[j].maxScore;
+                    }        
+                }
+
+                if(!found) {
+                    playedBenchmarks.push({
+                        id: matchedEntry[j].id,
+                        maxScore: matchedEntry[j].maxScore,
+                        count: matchedEntry[j].count,
+                    });
+                }
+    
+                console.log("applied score override for '" + playerData.id + "' of '" + matchedEntry[j].maxScore + "' on '" + matchedEntry[j].id + "'");          
+            }
+        }
+    }
+
     
     // console.log(JSON.parse(JSON.stringify(playedBenchmarks)));
     // console.log(JSON.parse(JSON.stringify(benchData)));
@@ -166,6 +197,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         season
     );
 
+    
     playerBenchmarks.sort((a, b) => a.scenarioID - b.scenarioID);
     const allPointsList = playerBenchmarks.map((bench) => bench.points);
 
@@ -425,6 +457,15 @@ function calculateRankRA(bench, userTask, benchRanks, benchPoints) {
 }
 
 function checkDivinity(pointsList) {
+    /*let result = pointsList.filter((point) => {
+        return point >= hardSubPoints[3];
+    }).length == 18;
+
+    if(result) return true;
+    else {
+        console.log("no divinity for " + pointsList);
+        return false;
+    }*/
     return (
         pointsList.filter((point) => {
             return point >= hardSubPoints[3];
@@ -675,8 +716,6 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
 //     console.log(benchmarkData);
 //     leaderboardData.push(benchmarkData);
 // });
-
-
 
 
 
