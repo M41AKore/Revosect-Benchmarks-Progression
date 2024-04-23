@@ -106,7 +106,7 @@
         </li>
       </ul>
     </div>
-    <router-view
+    <router-view 
       :isLoading="isLoading"
       class="border border-slate-600 bg-slate-900 rounded-b-md mb-10"
     ></router-view>

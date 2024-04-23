@@ -12,6 +12,7 @@ import RevosectBenchmarksPageKvks from "./pages/RevosectBenchmarksPageKvks.vue";
 import LeaderboardsPage from "./pages/LeaderboardsPage.vue";
 import RevosectLeaderboardsPage from "./pages/RevosectLeaderboardsPage.vue";
 import RevosectLeaderboardsPageKvks from "./pages/RevosectLeaderboardsPageKvks.vue";
+import RevosectLeaderboardsPage_S2 from "./pages/RevosectLeaderboardsPage_S2.vue";
 import TaskView from "./pages/TaskView.vue";
 import AboutPage from "./pages/AboutPage.vue";
 import Me_Viewer from "./pages/Me_Viewer.vue";
@@ -97,6 +98,11 @@ const router = createRouter({
           component: RevosectLeaderboardsPage,
         },
         {
+          name: "ra-leaderboards-s2",
+          path: "ra",
+          component: RevosectLeaderboardsPage_S2,
+        },
+        {
           name: "ra-leaderboards-kvks",
           path: "rakvks",
           component: RevosectLeaderboardsPageKvks,
@@ -107,7 +113,7 @@ const router = createRouter({
     { path: "/:notFound(.*)", component: null },
 
     {
-      path: "/me",
+      path: "/profile",
       component: Me_Viewer,
       props: true,
       children: [

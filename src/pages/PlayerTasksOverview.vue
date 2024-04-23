@@ -4,7 +4,7 @@
   </section>
   <section v-else style="background-color: #111;">
     <div class="grid grid-cols-4 gap-3 p-3 relative">
-      <input
+      <input style="background-color: #111;"
         type="text"
         name=""
         id=""
@@ -27,7 +27,7 @@
         v-model.trim="searchQuery"
         @change="handleQuery"
       />
-      <router-link
+      <router-link 
         v-for="(task, index) in paginatedTaskList.data"
         :key="index"
         class="
@@ -60,8 +60,8 @@
       </router-link>
     </div>
     <!-- Paginator -->
-    <div class="max-w-max mx-auto flex gap-1 items-center mb-4">
-      <button
+    <div class="max-w-max mx-auto flex gap-1 items-center mb-4" >
+      <button style="background-color: #333;"
         type="button"
         class="px-3 py-2.5 h-full inline-block bg-slate-700"
         @click="currentPage--"
@@ -85,6 +85,10 @@
             'bg-slate-600 pointer-events-none': this.currentPage == page - 1,
             ' hover:bg-slate-600': !!parseInt(page),
           }"
+          :style="{ 
+            'background-color': (this.currentPage == page - 1 ? '#555' : '#333'),
+            'border-color': (this.currentPage == page - 1 ? '#888' : '#222')
+          }"
           @click="handlePageSelect($event)"
         >
           {{ page }}
@@ -92,7 +96,7 @@
       </div>
       <!-- Center Buttons -->
 
-      <button
+      <button style="background-color: #333;"
         type="button"
         class="
           px-3
@@ -111,7 +115,7 @@
       >
         <chevron-icon class="h-5 w-5" direction="right"></chevron-icon>
       </button>
-      <input
+      <input style="background-color: #333;"
         type="text"
         v-model.number="goToPageInput"
         @keydown.enter="goToPage"
@@ -128,7 +132,7 @@
           ring-inset ring-slate-300
         "
       />
-      <button
+      <button style="background-color: #333;"
         class="
           text-center
           bg-slate-600

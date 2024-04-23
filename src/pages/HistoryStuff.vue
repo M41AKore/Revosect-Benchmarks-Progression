@@ -35,7 +35,6 @@
     <!--          Chart Race Bars          -->
     <!-- ********************************* -->
     <div style="display:flex;flex-direction: row;">
-
       <div class="chart">
       <transition-group name="slide-fade">
         <div class="bar-container" v-for="(bar, index) in sortedVisibleBars" :key="bar.label">
@@ -49,15 +48,18 @@
       </transition-group>
     </div>
 
-    <div class="chat-sidebar">
+
+    <div class="chat-sidebar" :style="{ 'margin-right': (isHidden ? '-260px' : '0px')}">
+      <button :style="{ 'margin-left': (isHidden ? '-10px' : '-10px'), 'margin-top': '-10px'}" class="toggle-button" @click="toggleSidebar">{{ isHidden ? '\u2190' : '×' }}</button>
+
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in messages" :key="index" class="message">
           <span v-for="(part, partIndex) in message.parts" :key="partIndex" :style="{ color: part.color }">{{ part.text }}</span>
         </div>
       </div>
+      
     </div>
-    </div>
-    
+  </div>
 
   </div> 
 </template>
@@ -80,6 +82,7 @@ export default {
       scoreEvents: eventDataFile.events,
       messages: [],
       //totalPosts: 0,
+      isHidden: false,
     };
   },
   computed: {
@@ -169,6 +172,7 @@ export default {
         }   
       }
             
+      if(this.isHidden) return;
       if(toPost.length > 0) {
         let c = `${curr.getFullYear()}/${(curr.getMonth() + 1)}/${curr.getDate()}`;
         this.addMessage({ parts: [{ text: "--- " + c + " ---", color: 'white' }] });
@@ -189,6 +193,10 @@ export default {
     scrollToBottom() {
       const container = this.$refs.messagesContainer;
       container.scrollTop = container.scrollHeight;
+    },
+    toggleSidebar() {
+      this.isHidden = !this.isHidden;
+      this.messages = [];
     },
   },
 };
@@ -249,6 +257,15 @@ export default {
   height: 80%;
   width: 300px; /* Adjust width as needed */
   overflow-y: auto; /* Enable scrollbar if content exceeds height */
+  background-color: #333;
+  transition: transform 0.3s ease;
+  border-color: #555;
+  border-radius: 5px;
+  border-width: 2px;
+}
+.hidden {
+  /* transform: translateX(0px); */
+  background-color: #333;
 }
 .messages {
   overflow-y: scroll;
@@ -260,5 +277,17 @@ export default {
   background-color: #333;
   color: #fff;
   border-radius: 5px;
+}
+.toggle-button {
+
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  background: none;
+  border-width: 2px;
+  border-color: #555;
+  height: 25px;
 }
 </style>

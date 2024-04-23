@@ -420,7 +420,13 @@ export const mediumSubRanks = {
   145: "Valour",
   175: "Mythic",
 };
-
+export const mediumSubRanksMap = new Map([
+  [75, "Ace"],
+  [90, "Legend"],
+  [115, "Sentinel"],
+  [145, "Valour"],
+  [175, "Mythic"]
+]);
 export const mediumSubPoints = [75, 90, 115, 145, 175];
 export const mediumPoints = [900, 1080, 1380, 1740, 2025];
 
@@ -539,14 +545,19 @@ export const easySubRanks = {
   50: "Gold",
   65: "Platinum",
 };
-
+export const easySubRanksMap = new Map([
+  [29, "Bronze"],
+  [38, "Silver"],
+  [50, "Gold"],
+  [65, "Platinum"],
+]);
 export const easySubPoints = [29, 38, 50, 65];
 export const easyPoints = [290, 360, 475, 620];
 
 
 
 
-export const s4HardKvks =  [
+export const S4HardKvks =  [
   {
     name: "S4 Threeshot Hard",
     leaderboardID: '666',
@@ -708,5 +719,261 @@ export const s4HardKvks =  [
     subCategory: "TrackTS",
     categoryID: 6,
     scenarioID: 18,
+  }
+];
+export const S4MedKvks = [
+  {
+    name: "S4 Threeshot Med",
+    leaderboardID: '666',
+    scores: [1000, 1100, 1200, 1300, 1400],
+    category: "Clicking",
+    subCategory: "Static",
+    categoryID: 1,
+    scenarioID: 1
+  },
+  {
+    "name": "S4 Sevenwide Med",
+    leaderboardID: '666',
+    "scores": [1075, 1175, 1275, 1375, 1475],
+    "category": "Clicking",
+    "subCategory": "Static",
+    "categoryID": 1,
+    "scenarioID": 2
+  },
+  {
+    "name": "S4 Fourwide Small Med",
+    leaderboardID: '666',
+    "scores": [895, 970, 1045, 1120, 1195],
+    "category": "Clicking",
+    "subCategory": "Static",
+    "categoryID": 1,
+    "scenarioID": 3
+  },
+  {
+    "name": "S4 Snapclick Med",
+    leaderboardID: '666',
+    "scores": [560, 630, 700, 770, 850],
+    "category": "Clicking",
+    "subCategory": "Dynamic",
+    "categoryID": 2,
+    "scenarioID": 4
+  },
+  {
+    "name": "S4 XYclick Med",
+    leaderboardID: '666',
+    "scores": [460, 540, 620, 700, 780],
+    "category": "Clicking",
+    "subCategory": "Dynamic",
+    "categoryID": 2,
+    "scenarioID": 5
+  },
+  {
+    "name": "S4 Bounceclick Med",
+    leaderboardID: '666',
+    "scores": [450, 550, 650, 750, 850],
+    "category": "Clicking",
+    "subCategory": "Dynamic",
+    "categoryID": 2,
+    "scenarioID": 6
+  },
+  {
+    "name": "S4 Glidertrack Med",
+    leaderboardID: '666',
+    "scores": [2000, 2200, 2400, 2600, 2800],
+    "category": "Tracking",
+    "subCategory": "Precise",
+    "categoryID": 3,
+    "scenarioID": 7
+  },
+  {
+    "name": "S4 Capsuletrack Med",
+    leaderboardID: '666',
+    "scores": [2000, 2250, 2500, 2750, 3000],
+    "category": "Tracking",
+    "subCategory": "Precise",
+    "categoryID": 3,
+    "scenarioID": 8
+  },
+  {
+    "name": "S4 Leaptrack Med",
+    leaderboardID: '666',
+    "scores": [2000, 2200, 2400, 2600, 2800],
+    "category": "Tracking",
+    "subCategory": "HybridTrack",
+    "categoryID": 4,
+    "scenarioID": 9
+  },
+  {
+    "name": "S4 Airtrack Med",
+    leaderboardID: '666',
+    "scores": [2100, 2400, 2700, 3000, 3300],
+    "category": "Tracking",
+    "subCategory": "HybridTrack",
+    "categoryID": 4,
+    "scenarioID": 10
+  },
+  {
+    "name": "S4 Reactivesphere Med",
+    leaderboardID: '666',
+    "scores": [1950, 2200, 2450, 2700, 2950],
+    "category": "Tracking",
+    "subCategory": "Reactive",
+    "categoryID": 5,
+    "scenarioID": 11
+  },
+  {
+    "name": "S4 Strafetrack Med",
+    leaderboardID: '666',
+    "scores": [2175, 2350, 2525, 2700, 2875],
+    "category": "Tracking",
+    "subCategory": "Reactive",
+    "categoryID": 5,
+    "scenarioID": 12
+  },
+  {
+    "name": "S4 Wideswitch Med",
+    leaderboardID: '666',
+    "scores": [116, 120, 124, 128, 132],
+    "category": "Switching",
+    "subCategory": "FlickTS",
+    "categoryID": 6,
+    "scenarioID": 13
+  },
+  {
+    "name": "S4 Orbswitch Med",
+    leaderboardID: '666',
+    "scores": [119, 124, 129, 134, 139],
+    "category": "Switching",
+    "subCategory": "FlickTS",
+    "categoryID": 6,
+    "scenarioID": 14
+  },
+  {
+    "name": "S4 XYswitch Med",
+    leaderboardID: '666',
+    "scores": [60, 65, 70, 75, 80],
+    "category": "Switching",
+    "subCategory": "HybridTS",
+    "categoryID": 7,
+    "scenarioID": 15
+  },
+  {
+    "name": "S4 Layerswitch Med",
+    leaderboardID: '666',
+    "scores": [63, 68, 73, 78, 83],
+    "category": "Switching",
+    "subCategory": "HybridTS",
+    "categoryID": 7,
+    "scenarioID": 16
+  },
+  {
+    "name": "S4 Evaswitch Med",
+    leaderboardID: '666',
+    "scores": [46, 49, 52, 55, 58],
+    "category": "Switching",
+    "subCategory": "TrackTS",
+    "categoryID": 8,
+    "scenarioID": 17
+  },
+  {
+    "name": "S4 Spaceswitch Med",
+    leaderboardID: '666',
+    "scores": [34, 37, 40, 43, 46],
+    "category": "Switching",
+    "subCategory": "TrackTS",
+    "categoryID": 8,
+    "scenarioID": 18
+  }
+];
+export const S4EasyKvks = [
+  {
+    name: "S4 Fourshot Easy",
+    leaderboardID: '666',
+    "scores": [500, 600, 700, 800],
+    "category": "Clicking",
+    "subCategory": "Static",
+    "categoryID": 1,
+    "scenarioID": 1
+  },
+  {
+    "name": "S4 Microshot Easy",
+    leaderboardID: '666',
+    "scores": [580, 670, 760, 850],
+    "category": "Clicking",
+    "subCategory": "Static",
+    "categoryID": 1,
+    "scenarioID": 2
+  },
+  {
+    "name": "S4 XYclick Easy",
+    leaderboardID: '666',
+    "scores": [450, 550, 650, 750],
+    "category": "Clicking",
+    "subCategory": "Dynamic",
+    "categoryID": 1,
+    "scenarioID": 3
+  },
+  {
+    "name": "S4 Bounceclick Easy",
+    leaderboardID: '666',
+    "scores": [360, 440, 520, 600],
+    "category": "Clicking",
+    "subCategory": "Dynamic",
+    "categoryID": 1,
+    "scenarioID": 4
+  },
+  {
+    "name": "S4 Glidertrack Easy",
+    leaderboardID: '666',
+    "scores": [1800, 2200, 2600, 3000],
+    "category": "Tracking",
+    "subCategory": "Precise",
+    "categoryID": 2,
+    "scenarioID": 5
+  },
+  {
+    "name": "S4 Capsuletrack Easy",
+    leaderboardID: '666',
+    "scores": [2400, 2800, 3200, 3600],
+    "category": "Tracking",
+    "subCategory": "Precise",
+    "categoryID": 2,
+    "scenarioID": 6
+  },
+  {
+    "name": "S4 Airtrack Easy",
+    leaderboardID: '666',
+    "scores": [2000, 2400, 2800, 3100],
+    "category": "Tracking",
+    "subCategory": "HybridTrack",
+    "categoryID": 2,
+    "scenarioID": 7
+  },
+  {
+    "name": "S4 Strafetrack Easy",
+    leaderboardID: '666',
+    "scores": [2200, 2600, 3000, 3400],
+    "category": "Tracking",
+    "subCategory": "Reactive",
+    "categoryID": 2,
+    "scenarioID": 8
+  },
+  {
+    "name": "S4 XYswitch Easy",
+    leaderboardID: '666',
+    "scores": [39, 46, 53, 60],
+    "category": "Switching",
+    "subCategory": "HybridTS",
+    "categoryID": 3,
+    "scenarioID": 9
+  },
+  {
+    "name": "S4 Layerswitch Easy",
+    leaderboardID: '666',
+    "scores": [42, 49, 57, 65],
+    "category": "Switching",
+    "subCategory": "HybridTS",
+    "categoryID": 3,
+    "scenarioID": 10
   }
 ];

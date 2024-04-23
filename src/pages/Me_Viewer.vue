@@ -51,7 +51,7 @@
           <span
             >rA S4 Kvks - {{ overallRankRAS4KVKS }}
             <img
-              :src="`../../rank-img/ra/s2/${imagePath(overallRankRAS4KVKS)}.png`"
+              :src="`../../rank-img/ra/s4/${imagePath(overallRankRAS4KVKS)}.png`"
               class="h-5 inline"
               alt=""
           /></span>
@@ -74,7 +74,7 @@
       <Popup v-if="showPopup" @submit="handleSubmission"/>
       </div>   
     </section>
-  <div class="relative z-10" id="profile-nav" >
+  <div class="relative z-10" id="profile-nav">
       <ul class="flex">
         <li v-for="(tab, key) in tabs" :key="tab" >
           <router-link
@@ -94,7 +94,7 @@
         </li>
       </ul>
     </div>
-    <router-view
+    <router-view 
       :isLoading="isLoading"
       class="border border-slate-600 bg-slate-900 rounded-b-md mb-10"
     ></router-view>
@@ -137,6 +137,8 @@ export default {
       "RAEasyS2",
       "currentPlayerTasks",
       "RAKvksHard",
+      "RAKvksMedium",
+      "RAKvksEasy",
     ]),
     overallRankRA() {
       return this.RAHard.overallRank != "Unranked"
@@ -154,7 +156,12 @@ export default {
     },
     overallRankRAS4KVKS() {
       if(this.RAKvksHard != null) {
-        return this.RAKvksHard.overallRank != "Unranked" ? this.RAKvksHard.overallRank : "Unranked";
+        return this.RAKvksHard.overallRank != "Unranked"
+        ? this.RAKvksHard.overallRank
+        : this.RAKvksMedium.overallRank != "Unranked"
+        ? this.RAKvksMedium.overallRank
+        : this.RAKvksEasy.overallRank;
+        //return this.RAKvksHard.overallRank != "Unranked" ? this.RAKvksHard.overallRank : "Unranked";
       }
       else return "Unranked";
     },
@@ -190,9 +197,9 @@ export default {
     },
     handleSubmission() {
       //console.log('Submit button clicked!');
-      this.yourFunction();
+      this.getStuff();
     },
-    async yourFunction() {
+    async getStuff() {
       let cookiefiedAimlabsName = functions.getCookie('aimlabsusername');
     //console.log("aimlabsusername from cookies: " + cookiefiedAimlabsName);
     if(!functions.isNullOrEmpty(cookiefiedAimlabsName)) {
@@ -238,7 +245,8 @@ export default {
   },
   async mounted() {
     //this.showPopup = true;
-    this.yourFunction();
+    console.log("yo");
+    this.getStuff();
   },
 };
 </script>

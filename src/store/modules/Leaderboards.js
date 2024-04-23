@@ -1,5 +1,5 @@
 import { organizeLeaderboard, KVKScalculateBenchmark } from "../../helpers/functions";
-import { easyBench, hardBench, mediumBench, s4HardKvks } from "../../helpers/revosectData.js";
+import { easyBench, hardBench, mediumBench, S4HardKvks, S4MedKvks, S4EasyKvks } from "../../helpers/revosectData.js";
 import { easyBenchS2, hardBenchS2, mediumBenchS2 } from "../../helpers/revosectDataS2.js";
 import axios from 'axios';
 
@@ -9,23 +9,44 @@ export default {
       selectedBenchmarkRA: 2,
       selectedCategoryRA: 3,
       selectedSubCategoryRA: 3,
-      benchmarksRA: ["Easy", "Medium", "Hard", "HardS2"],  //this is what shows up in the dropdown
+      benchmarksRA: ["Easy", "Medium", "Hard"],  //this is what shows up in the dropdown
       categoriesRA: ["Clicking", "Tracking", "Switching", "Overall"],
       subCategoriesRA: {
         Clicking: ["Static", "Dynamic", "Overall"],
-        Tracking: ["Precise", "Reactive", "Overall"],
-        Switching: ["Flick", "Track", "Overall"],
+        Tracking: ["Precise", "HybridTrack", "Reactive", "Overall"],
+        Switching: ["FlickTS", "HybridTS", "TrackTS", "Overall"],
       },
       hardLdb: [],
       mediumLdb: [],
       easyLdb: [],
+
       hardLdbS2: [],
-      hardLbdKvks: [],
+      mediumLdbS2: [],
+      easyLdbS2: [],
+      selectedBenchmarkRAS2: 2,
+      selectedCategoryRAS2: 3,
+      selectedSubCategoryRAS2: 2,
+      benchmarksRAS2: ["Easy", "Medium", "Hard"],
+      categoriesRAS2: ["Clicking", "Tracking", "Switching", "Overall"],
+      subCategoriesRAS2: {
+        "Clicking": ["Static", "Dynamic", "Overall"],
+        "Tracking": ["Precise", "Reactive", "Overall"],
+        "Switching": ["Flick", "Track", "Overall"],
+      },
+
+      hardLdbKvks: [],
+      mediumLdbKvks: [],
+      easyLdbKvks: [],
       selectedBenchmarkRAKvks: 0,
       selectedCategoryRAKvks: 3,
       selectedSubCategoryRAKvks: 0,
-      benchmarksRAKvks: ["Hard" ],
+      benchmarksRAKvks: [ "Easy", "Medium", "Hard" ],
       categoriesRAKvks: [ "Clicking", "Tracking", "Switching", "Overall" ],
+      subCategoriesRAS4: {
+        Clicking: ["Static", "Dynamic", "Overall"],
+        Tracking: ["Precise", "HybridTrack", "Reactive", "Overall"],
+        Switching: ["FlickTS", "HybridTS", "TrackTS", "Overall"],
+      },
     };
   },
   getters: {
@@ -41,45 +62,88 @@ export default {
     hardLdbS2(state) {
       return state.hardLdbS2;
     },
-    hardLbdKvks(state) {
-      return state.hardLbdKvks;
+    mediumLdbS2(state) {
+      return state.mediumLdbS2;
     },
+    easyLdbS2(state) {
+      return state.easyLdbS2;
+    },
+    hardLdbKvks(state) {
+      return state.hardLdbKvks;
+    },
+    mediumLdbKvks(state) {
+      return state.mediumLdbKvks;
+    },
+    easyLdbKvks(state) {
+      return state.easyLdbKvks;
+    },
+
+    //-------------------------------------------
     selectedBenchmarkRA(state) {
       return state.selectedBenchmarkRA;
     },
     selectedBenchmarkRAKvks(state) {
       return state.selectedBenchmarkRAKvks;
     },
+    selectedBenchmarkRAS2(state) {
+      return state.selectedBenchmarkRAS2;
+    },
+
+    //-------------------------------------------
     selectedCategoryRA(state) {
       return state.selectedSubCategoryRA;
     },
     selectedCategoryRAKvks(state) {
       return state.selectedSubCategoryRAKvks;
     },
+    selectedCategoryRAS2(state) {
+      return state.selectedCategoryRAS2;
+    },
+
+    //-------------------------------------------
     selectedSubCategoryRA(state) {
       return state.selectedSubCategoryRA;
     },
     selectedSubCategoryRAKvks(state) {
       return state.selectedSubCategoryRAKvks;
     },
+    selectedSubCategoryRAS2(state) {
+      return state.selectedSubCategoryRAS2;
+    },
+
+    //-------------------------------------------
     benchmarksRA(state) {
       return state.benchmarksRA;
     },
     benchmarksRAKvks(state) {
       return state.benchmarksRAKvks;
     },
+    benchmarksRAS2(state) {
+      return state.benchmarksRAS2;
+    },
+
+    //-------------------------------------------
     categoriesRA(state) {
       return state.categoriesRA;
     },
+    categoriesRAKvks(state) {
+      return state.categoriesRAKvks;
+    },
+    categoriesRAS2(state) {
+      return state.categoriesRAS2;
+    },
+
+    //-------------------------------------------
     subCategoriesRA(state) {
       return state.subCategoriesRA;
     },
-    categoriesRAKvks(state) {
-      return state.categoriesRA;
-    },
     subCategoriesRAKvks(state) {
-      return state.subCategoriesRA;
+      return state.subCategoriesRAKvks;
     },
+    subCategoriesRAS2(state) {
+      return state.subCategoriesRAS2;
+    },
+    
   },
   mutations: {
     setHardLdb(state, payload) {
@@ -94,25 +158,50 @@ export default {
     setHardLdbS2(state, payload) {
       state.hardLdbS2 = payload;
     },
-    setHardLbdKvks(state, payload) {
-      state.hardLbdKvks = payload;
+    setMediumLdbS2(state, payload) {
+      state.mediumLdbS2 = payload;
+    },
+    setEasyLdbS2(state, payload) {
+      state.easyLdbS2 = payload;
+    },    
+    setHardLdbKvks(state, payload) {
+      state.hardLdbKvks = payload;
+    },
+    setMediumLdbKvks(state, payload) {
+      state.mediumLdbKvks = payload;
+    },
+    setEasyLdbKvks(state, payload) {
+      state.easyLdbKvks = payload;
     },
 
+    //-------------------------------------------
     setSelectedBenchmarkRA(state, payload) {
       state.selectedBenchmarkRA = payload;
     },
-    setSelectedCategoryRA(state, payload) {
-      state.selectedCategoryRA = payload;
+    setSelectedBenchmarkRAS2(state, payload) {
+      state.selectedBenchmarkRAS2 = payload;
     },
-    setSelectedSubCategoryRA(state, payload) {
-      state.selectedSubCategoryRA = payload;
-    },
-
     setSelectedBenchmarkRAKvks(state, payload) {
       state.selectedBenchmarkRAKvks = payload;
     },
+
+    //-------------------------------------------
+    setSelectedCategoryRA(state, payload) {
+      state.selectedCategoryRA = payload;
+    },
+    setSelectedCategoryRAS2(state, payload) {
+      state.selectedCategoryRAS2 = payload;
+    },
     setSelectedCategoryRAKvks(state, payload) {
       state.selectedCategoryRAKvks = payload;
+    },
+    
+    //-------------------------------------------
+    setSelectedSubCategoryRA(state, payload) {
+      state.selectedSubCategoryRA = payload;
+    },
+    setSelectedSubCategoryRAS2(state, payload) {
+      state.selectedSubCategoryRAS2 = payload;
     },
     setSelectedSubCategoryRAKvks(state, payload) {
       state.selectedSubCategoryRAKvks = payload;
@@ -121,24 +210,24 @@ export default {
   actions: {
     async fetchKvksLeaderboard(context, payload) {
       const { mode, season } = payload;
-      console.log("mode: " + mode + ", " + ", season: " + season);
+      console.log("mode: " + mode + ", season: " + season);
 
       let ldb = null;
       let fullBench = null;
       switch (mode) {
         case "hard":
-          fullBench = s4HardKvks;
+          fullBench = S4HardKvks;
           break;
-        /*case "medium":
-          fullBench = mediumBench;
+        case "medium":
+          fullBench = S4MedKvks;
           break;
         case "easy":
-          fullBench = easyBench;
-          break;*/
+          fullBench = S4EasyKvks;
+          break;
         default: 
           return;
       }
-  
+
       let leaderboardList = [];
       let axiosRequests = [];
 
@@ -215,24 +304,24 @@ export default {
 
           if(playerList.length > 0) {
             for (let i = 0; i < playerList.length; i++) {
-              let bench = KVKScalculateBenchmark(playerList[i].taskResults, "hard", "s4");
+              let bench = KVKScalculateBenchmark(playerList[i].taskResults, mode, "s4");
               playerList[i].benchResult = bench;
             }
           }
 
           playerList = playerList.sort((a, b) => b.overallPoints - a.overallPoints);
-          console.log(playerList[0]);
+          console.log(mode);
 
           switch (mode) {
             case "hard":
-              context.commit("setHardLbdKvks", playerList);
+              context.commit("setHardLdbKvks", playerList);
               break;
-            /*case "medium":
-              context.commit("setMediumLdb", ldb);
+            case "medium":
+              context.commit("setMediumLdbKvks", playerList);
               break;
             case "easy":
-              context.commit("setEasyLdb", ldb);
-              break;*/
+              context.commit("setEasyLdbKvks", playerList);
+              break;
             default: 
               return;
           }
@@ -242,7 +331,7 @@ export default {
     async fetchLeaderboard(context, payload) {
       const { mode, season } = payload;
 
-      console.log("mode: " + mode + ", " + ", season: " + season);
+      console.log("mode: " + mode + ", season: " + season);
 
       let ldb = null;
       let fullBench = null;
@@ -251,10 +340,10 @@ export default {
           fullBench = season == "s4" ? hardBench : hardBenchS2;
           break;
         case "medium":
-          fullBench = mediumBench;
+          fullBench = season == "s4" ? mediumBench : mediumBenchS2;
           break;
         case "easy":
-          fullBench = easyBench;
+          fullBench =  season == "s4" ? easyBench : easyBenchS2;
           break;
       }
 
@@ -281,10 +370,12 @@ export default {
                 else if(season == "s2") context.commit("setHardLdbS2", ldb);
                 break;
               case "medium":
-                context.commit("setMediumLdb", ldb);
+                if(season == "s4") context.commit("setMediumLdb", ldb);
+                else if(season == "s2") context.commit("setMediumLdbS2", ldb);
                 break;
               case "easy":
-                context.commit("setEasyLdb", ldb);
+                if(season == "s4") context.commit("setEasyLdb", ldb);
+                else if(season == "s2") context.commit("setEasyLdbS2", ldb);
                 break;
             }
           }

@@ -42,7 +42,7 @@
             <!-- *************************** -->
             <!-- SubCategory Select           -->
             <!-- *************************** -->
-            <div  v-if="selectedCategoryRA != 3 && benchmarksRA[selectedBenchmarkRA] == 'hards2'">
+            <div  v-if="selectedCategoryRA != 3  && selectedBenchmarkRA > 2">
                 <p class="mb-1 ml-1">Sub-Category</p>
                 <dropdown
                     class="relative"
@@ -176,12 +176,12 @@ export default {
             currentPage: 0,
             goToPageInput: null,
             leaderboardLoading: false,
-            benchmark: ["Easy", "Medium", "Hard", "HardS2"],
+            benchmark: ["Easy", "Medium", "Hard"],
             category: ["Clicking", "Tracking", "Switching", "Overall"],
             subCategory: {
                 Clicking: ["Static", "Dynamic", "Overall"],
-                Tracking: ["Precise", "Reactive", "Overall"],
-                Switching: ["Flick", "Track", "Overall"],
+                Tracking: ["Precise", "HybridTrack", "Reactive", "Overall"],
+                Switching: ["FlickTS", "HybridTS", "TrackTS", "Overall"],
             },
             lastCategoryIndex: 3,
             lastSubCategoryIndex: 3,
@@ -190,15 +190,14 @@ export default {
     watch: {
         selectedBenchmarkRA(newIndex) {
             let bench = this.benchmark[newIndex].toLowerCase();
-            console.log("bench: " + bench);
+            //console.log("bench: " + bench);
 
             if (bench == "hard" && this.$store.getters.hardLdb != 0) return;
             if (bench == "medium" && this.$store.getters.mediumLdb != 0) return;
             if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
             this.leaderboardLoading = true;
 
-            if(bench == "hards2") this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
-            else this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });       
+            this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });      
         },
         selectedLeaderboard(newArr) {
             if (newArr.length) {
@@ -227,38 +226,16 @@ export default {
                 case 2:
                     ldb = this.$store.getters.hardLdb;
                     break;
-                case 3:
-                    ldb = this.$store.getters.hardLdbS2;
-                    break;
             }
 
-            console.log("selected benchmark: " + this.selectedBenchmarkRA);
-            console.log("selected cat: " + this.selectedCategoryRA);
-
+            //let cat = this.category[this.selectedCategoryRA];
             ldb.forEach((player) => {
-
                 player.selectedPoints = player.overallPoints;
 
-                if(this.selectedBenchmarkRA < 3) {
-
-                    if(this.selectedCategoryRA == 0) player.selectedPoints = player.subCategoryPoints.Clicking;
-                    else if(this.selectedCategoryRA == 1) player.selectedPoints = player.subCategoryPoints.Tracking;
-                    else if(this.selectedCategoryRA == 2) player.selectedPoints = player.subCategoryPoints.Switching;
-                    else if(this.selectedCategoryRA == 3) player.selectedPoints = player.overallPoints;
-                }
-                else {
-                    player.selectedPoints = 0;
-                    let cat = this.subCategory[this.category[this.selectedCategoryRA]];
-                    if (this.selectedCategoryRA == 3) {
-                        player.selectedPoints = player.overallPoints;
-                        return;
-                    }
-                    if (this.selectedSubCategoryRA == 2) {
-                        player.selectedPoints = player.subCategoryPoints[cat[0]] + player.subCategoryPoints[cat[1]];
-                        return;
-                    }
-                    player.selectedPoints = player.subCategoryPoints[cat[this.selectedSubCategoryRA]];
-                }
+                if(this.selectedCategoryRA == 0) player.selectedPoints = player.subCategoryPoints.Clicking;
+                else if(this.selectedCategoryRA == 1) player.selectedPoints = player.subCategoryPoints.Tracking;
+                else if(this.selectedCategoryRA == 2) player.selectedPoints = player.subCategoryPoints.Switching;
+                else if(this.selectedCategoryRA == 3) player.selectedPoints = player.overallPoints;
             });
             return ldb.sort((a, b) => b.selectedPoints - a.selectedPoints);
         },
@@ -268,6 +245,7 @@ export default {
             let pageCount = Math.ceil(playerList.length / perPage) - 1;
             let start = this.currentPage * perPage;
             let end = this.currentPage * perPage + perPage;
+
             return {
                 data: playerList.slice(start, end),
                 start: start,
@@ -280,18 +258,13 @@ export default {
             let pages = [];
             if (this.currentPage > 1) pages.push(1);
             if (this.currentPage > 2) pages.push("...");
-            for (
-                let i = this.currentPage;
-                i < this.currentPage + 3 &&
-                i < this.paginatedPlayerList.pageCount + 2;
-                i++
-            ) {
+
+            for (let i = this.currentPage; i < this.currentPage + 3 && i < this.paginatedPlayerList.pageCount + 2; i++) 
                 if (i > 0) pages.push(i);
-            }
-            if (this.currentPage < this.paginatedPlayerList.pageCount - 2)
-                pages.push("...");
-            if (this.currentPage < this.paginatedPlayerList.pageCount - 1)
-                pages.push(this.paginatedPlayerList.pageCount + 1);
+
+            if (this.currentPage < this.paginatedPlayerList.pageCount - 2) pages.push("...");
+            if (this.currentPage < this.paginatedPlayerList.pageCount - 1) pages.push(this.paginatedPlayerList.pageCount + 1);
+
             return pages;
         },
     },
@@ -303,12 +276,14 @@ export default {
         },
         changeBenchmark(index) {
             this.$store.commit("setSelectedBenchmarkRA", index);
+
+            this.lastCategoryIndex = 3;
+            this.lastSubCategoryIndex = 3;
         },
         changeCategory(index) {
             if(index == this.lastCategoryIndex) return;
 
             console.log("category select! " + index);
-
             let bench = this.benchmark[this.selectedBenchmarkRA].toLowerCase();
             console.log("bench select " + bench);
 
@@ -318,17 +293,13 @@ export default {
                 case "easy":
                     this.changeSubCategory(index);
                     break;
-                
                 default:
-                    this.$store.commit("setSelectedCategoryRA", index);
-                    
                     break;
             }
 
             this.lastCategoryIndex = index;                               
         },
         changeSubCategory(index) {
-
             if(index == this.lastSubCategoryIndex) return;
             else {
                 console.log("subcategory select! " + index);
@@ -339,31 +310,20 @@ export default {
 
         handlePageSelect(event) {
             let value = parseInt(event.target.textContent);
-            if (value) {
-                this.currentPage = value - 1;
-            }
+            if (value) this.currentPage = value - 1;
         },
         goToPage() {
             if (this.goToPageInput) {
-                if (
-                    this.goToPageInput >
-                    this.paginatedPlayerList.pageCount + 1
-                ) {
-                    this.currentPage = this.paginatedPlayerList.pageCount;
-                } else if (this.goToPageInput < 1) {
-                    this.currentPage = 0;
-                } else {
-                    this.currentPage = this.goToPageInput - 1;
-                }
+                if(this.goToPageInput > this.paginatedPlayerList.pageCount + 1) this.currentPage = this.paginatedPlayerList.pageCount;
+                else if (this.goToPageInput < 1) this.currentPage = 0;
+                else this.currentPage = this.goToPageInput - 1;
             }
             this.goToPageInput = null;
         },
         getImagePath(rank) {
-            if(this.benchmark[this.selectedBenchmarkRA].toLowerCase() == "hards2") {
-                if(rank != null) return `../../rank-img/ra/s2/${rank.toLowerCase()}.png`;
-            }
-            else {
-                if(rank != null) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
+            if(rank != null) return `../../rank-img/ra/s4/${rank.toLowerCase()}.png`;
+            else if(rank == null || rank == undefined) {
+                return `../../rank-img/ra/s4/unranked.png`;
             }
         },
     },
@@ -376,14 +336,7 @@ export default {
         if (bench == "easy" && this.$store.getters.easyLdb != 0) return;
         this.leaderboardLoading = true;
 
-        if(bench == "hards2") {
-            if(this.$store.getters.hardLdbS2 != 0) {
-                this.$store.dispatch("fetchLeaderboard", { mode: "hard", season: "s2" });
-            }
-        }
-         else {
-            this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
-        }         
+        this.$store.dispatch("fetchLeaderboard", { mode: bench, season: "s4" });
     },
 };
 </script>

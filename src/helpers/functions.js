@@ -9,15 +9,19 @@ import {
     mediumRanks,
     mediumSubPoints,
     mediumSubRanks,
+    mediumSubRanksMap,
     easyPoints,
     easyRanks,
     easySubPoints,
     easySubRanks,
+    easySubRanksMap,
     hardBench,
     mediumBench,
     easyBench,
     categories,
-    s4HardKvks,
+    S4HardKvks,
+    S4MedKvks,
+    S4EasyKvks,
     categoriesActual,
 } from "./revosectData";
 import {
@@ -185,8 +189,7 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
             }
         }
     }
-
-    
+  
     // console.log(JSON.parse(JSON.stringify(playedBenchmarks)));
     // console.log(JSON.parse(JSON.stringify(benchData)));
     //Computing the scores and ranks for each of the played benchm  ark scenarios
@@ -197,7 +200,6 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         season
     );
 
-    
     playerBenchmarks.sort((a, b) => a.scenarioID - b.scenarioID);
     const allPointsList = playerBenchmarks.map((bench) => bench.points);
 
@@ -327,10 +329,6 @@ export function calculateRevosectBenchmarks(playerData, mode, season) {
         console.log("aggregateSubCategoryPoints is null");
     }
 
-    /*if(season == "s2") {
-        console.log("subcatpoints: " + aggregateSubCategoryPoints);
-    }*/
-
     return {
         overallPoints,
         overallRank,
@@ -457,15 +455,6 @@ function calculateRankRA(bench, userTask, benchRanks, benchPoints) {
 }
 
 function checkDivinity(pointsList) {
-    /*let result = pointsList.filter((point) => {
-        return point >= hardSubPoints[3];
-    }).length == 18;
-
-    if(result) return true;
-    else {
-        console.log("no divinity for " + pointsList);
-        return false;
-    }*/
     return (
         pointsList.filter((point) => {
             return point >= hardSubPoints[3];
@@ -724,24 +713,60 @@ export function organizeLeaderboard(playerList, fullBench, mode, season) {
  ************* KOVAAK'S SECTION **************
  *********************************************/
 
-export async function getKvksData() {
+export async function getKvksData(mode, season) {
     let kvksScores = [];
 
     let cookiefiedSteamID = getCookie('steamid64');
     //console.log("steamid from cookies: " + cookiefiedSteamID);
     if (!isNullOrEmpty(cookiefiedSteamID)) {
-        if (s4HardKvks != null) {
-            for (let i = 0; i < s4HardKvks.length; i++) {
-                let kvksScore = await kvksUserAPIcall(cookiefiedSteamID, s4HardKvks[i].leaderboardID, s4HardKvks[i].name);
-                if (kvksScore != null) kvksScores.push(kvksScore);
-            }
 
-            if (kvksScores.length > 0) {
-                const results = KVKScalculateBenchmark(kvksScores, "hard", "s4");
-                //console.log(results);
-                return results;
+        if(season == "s4") {
+            switch(mode) {
+                case "hard":
+                    if (S4HardKvks != null) {
+                        for (let i = 0; i < S4HardKvks.length; i++) {
+                            let kvksScore = await kvksUserAPIcall(cookiefiedSteamID, S4HardKvks[i].leaderboardID, S4HardKvks[i].name);
+                            if (kvksScore != null) kvksScores.push(kvksScore);
+                        }
+            
+                        if (kvksScores.length > 0) {
+                            const results = KVKScalculateBenchmark(kvksScores, "hard", "s4");
+                            //console.log(results);
+                            return results;
+                        }
+                    }
+                    break;
+                case "medium":
+                    if(S4MedKvks != null) {
+                        for (let i = 0; i < S4MedKvks.length; i++) {
+                            let kvksScore = await kvksUserAPIcall(cookiefiedSteamID, S4MedKvks[i].leaderboardID, S4MedKvks[i].name);
+                            if (kvksScore != null) kvksScores.push(kvksScore);
+                        }
+            
+                        if (kvksScores.length > 0) {
+                            const results = KVKScalculateBenchmark(kvksScores, "medium", "s4");
+                            //console.log(results);
+                            return results;
+                        }
+                    }
+                    break;
+                case "easy":
+                    if(S4EasyKvks != null) {
+                        for (let i = 0; i < S4EasyKvks.length; i++) {
+                            let kvksScore = await kvksUserAPIcall(cookiefiedSteamID, S4EasyKvks[i].leaderboardID, S4EasyKvks[i].name);
+                            if (kvksScore != null) kvksScores.push(kvksScore);
+                        }
+            
+                        if (kvksScores.length > 0) {
+                            const results = KVKScalculateBenchmark(kvksScores, "easy", "s4");
+                            //console.log(results);
+                            return results;
+                        }
+                    }
+                    break;
             }
         }
+
     }
     //else console.log("no steamid in cookies!");
 }
@@ -791,7 +816,21 @@ export function KVKScalculateBenchmark(scenarioData, tier, season) {
                     scenarioRanks = hardSubRanksMap;
                     scenarioPointRewards = hardSubPoints;
                     benchmarkRanks = hardRanks;
-                    benchmarkScenarios = s4HardKvks;
+                    benchmarkScenarios = S4HardKvks;
+                    break;
+                
+                case "medium":
+                        scenarioRanks = mediumSubRanksMap;
+                        scenarioPointRewards = mediumSubPoints;
+                        benchmarkRanks = mediumRanks;
+                        benchmarkScenarios = S4MedKvks;
+                        break;
+
+                case "easy":
+                    scenarioRanks = easySubRanksMap;
+                    scenarioPointRewards = easySubPoints;
+                    benchmarkRanks = easyRanks;
+                    benchmarkScenarios = S4EasyKvks;
                     break;
             }
             break;

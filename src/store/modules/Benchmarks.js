@@ -57,6 +57,22 @@ export default {
         benchmarks: [],
         detailsOpen: false,
       },
+      kvksBenchMedium: {
+        overallPoints: 0,
+        overallRank: "Unranked",
+        allPoints: [],
+        subCategoryPoints: [],
+        benchmarks: [],
+        detailsOpen: false,
+      },
+      kvksBenchEasy: {
+        overallPoints: 0,
+        overallRank: "Unranked",
+        allPoints: [],
+        subCategoryPoints: [],
+        benchmarks: [],
+        detailsOpen: false,
+      },
     };
   },
   getters: {
@@ -80,7 +96,13 @@ export default {
     },
     RAKvksHard(state) {
       return state.kvksBenchHard;
-    }
+    },
+    RAKvksMedium(state) {
+      return state.kvksBenchMedium;
+    },
+    RAKvksEasy(state) {
+      return state.kvksBenchEasy;
+    },
   },
   mutations: {
     setRAHard(state, payload) {
@@ -103,7 +125,13 @@ export default {
     },
     setRAKVksHard(state, payload) {
       state.kvksBenchHard = payload;
-    }
+    },
+    setRAKVksMedium(state, payload) {
+      state.kvksBenchMedium = payload;
+    },
+    setRAKVksEasy(state, payload) {
+      state.kvksBenchEasy = payload;
+    },
   },
   actions: {
     setRABenchesS2(context) {
@@ -161,12 +189,16 @@ export default {
         "s4",
       );
 
-      let kvksHard = await getKvksData();
+      let kvksHard = await getKvksData("hard", "s4");
+      let KVksMedium = await getKvksData("medium", "s4");
+      let KVksEasy = await getKvksData("easy", "s4");
 
       context.commit("setRAEasy", RAEasy);
       context.commit("setRAMedium", RAMedium);
       context.commit("setRAHard", RAHard);
       context.commit("setRAKVksHard", kvksHard);
+      context.commit("setRAKVksMedium", KVksMedium);
+      context.commit("setRAKVksEasy", KVksEasy);
     },
   },
 };

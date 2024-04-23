@@ -10,7 +10,17 @@
           rounded-sm
           transition
           hover:bg-slate-500
-          inline-block">AimLabs</router-link>
+          inline-block">AimLabs S4</router-link>
+          <router-link 
+        :to="{ name: 'ra-leaderboards-s2' }"
+        class="
+          border-2 border-slate-500
+          px-6
+          py-2
+          rounded-sm
+          transition
+          hover:bg-slate-500
+          inline-block">AimLabs S2</router-link>
       <router-link
         :to="{ name: 'ra-leaderboards-kvks' }"
         class="
